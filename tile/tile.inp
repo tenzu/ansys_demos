@@ -1,0 +1,417 @@
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+KEYW,LSDYNA,1   
+KEYW,PR_DYNA,1 
+/CWD,'C:\Users\Cliff\Desktop\tmp\tile'
+tile_R1 = 2700	!tile inner radius (mm)
+tile_R2 = 3000	!tile outer radius (mm)
+tile_theta = 11.775	!tile angle (degree)
+tile_D = 1500	!tile depth (mm)
+tile_beta = 7.5	!tile beta angle (degree)
+tile_ob = 50	!tile outer bargin for bars (mm)
+tile_ib = 40	!tile inner bargin for bars (mm)
+c_size = 20	!concrete mesh size (mm)
+b_size = 15	!bar mesh size (mm)
+r_beam = 0.56   !radius of fibre section (mm)
+
+/VIEW,1,1,1,1   
+/ANG,1  
+/REP,FAST 
+ 
+/PREP7  
+ET,1,SOLID164   
+ET,2,LINK160
+R,1,r_beam,  !section area for fibre
+MP,DENS,1,0.0024    !material properties
+MP,EX,1,2e4
+MP,NUXY,1,0.2
+MP,DENS,2,0.0078
+MP,EX,2,2e5
+MP,NUXY,2,0.28
+
+Hbar_layers = 12
+*DIM,HB_lys,ARRAY,Hbar_layers,1,1, , ,      !horizontal bar layers (mm)
+*SET,HB_lys(1,1,1) , 60
+*SET,HB_lys(2,1,1) , 80
+*SET,HB_lys(3,1,1) , 120   
+*SET,HB_lys(4,1,1) , 220   
+*SET,HB_lys(5,1,1) , 100   
+*SET,HB_lys(6,1,1) , 100   
+*SET,HB_lys(7,1,1) , 140
+*SET,HB_lys(8,1,1) , 100
+*SET,HB_lys(9,1,1) , 100   
+*SET,HB_lys(10,1,1) , 220  
+*SET,HB_lys(11,1,1) , 120  
+*SET,HB_lys(12,1,1) , 80  
+Hbar_thetas = Hbar_layers
+*DIM,HB_thetas,ARRAY,Hbar_thetas,1,1, , ,   !horizontal bar thetas
+*SET,HB_thetas(1,1,1) , 10.646 
+*SET,HB_thetas(2,1,1) , 10.646-(10.646-7.039)*(80)/1380
+*SET,HB_thetas(3,1,1) , 10.646-(10.646-7.039)*(200)/1380
+*SET,HB_thetas(4,1,1) , 10.646-(10.646-7.039)*(420)/1380
+*SET,HB_thetas(5,1,1) , 10.646-(10.646-7.039)*(520)/1380
+*SET,HB_thetas(6,1,1) , 10.646-(10.646-7.039)*(620)/1380
+*SET,HB_thetas(7,1,1) , 10.646-(10.646-7.039)*(760)/1380
+*SET,HB_thetas(8,1,1) , 10.646-(10.646-7.039)*(860)/1380
+*SET,HB_thetas(9,1,1) , 10.646-(10.646-7.039)*(960)/1380
+*SET,HB_thetas(10,1,1) , 10.646-(10.646-7.039)*(1180)/1380
+*SET,HB_thetas(11,1,1) , 10.646-(10.646-7.039)*(1300)/1380
+*SET,HB_thetas(12,1,1) , 7.039
+*DIM,HB2_thetas,ARRAY,Hbar_layers,3,1, , ,      !horizontal bar_2 thetas
+*SET,HB2_thetas(1,1,1) , 10.222
+*SET,HB2_thetas(1,2,1) , 8.609
+*SET,HB2_thetas(1,3,1) , 2.298
+*SET,HB2_thetas(2,1,1) , 10.015
+*SET,HB2_thetas(2,2,1) , 8.403
+*SET,HB2_thetas(2,3,1) , 2.298
+*SET,HB2_thetas(3,1,1) , 9.705   
+*SET,HB2_thetas(3,2,1) , 8.095 
+*SET,HB2_thetas(3,3,1) , 2.298
+*SET,HB2_thetas(4,1,1) , 9.138
+*SET,HB2_thetas(4,2,1) , 7.530
+*SET,HB2_thetas(4,3,1) , 2.298
+*SET,HB2_thetas(5,1,1) , 8.880
+*SET,HB2_thetas(5,2,1) , 7.270
+*SET,HB2_thetas(5,3,1) , 2.298
+*SET,HB2_thetas(6,1,1) , 8.623
+*SET,HB2_thetas(6,2,1) , 7.015
+*SET,HB2_thetas(6,3,1) , 2.298
+*SET,HB2_thetas(7,1,1) , 8.262
+*SET,HB2_thetas(7,2,1) , 6.657
+*SET,HB2_thetas(7,3,1) , 2.298
+*SET,HB2_thetas(8,1,1) , 8.005
+*SET,HB2_thetas(8,2,1) , 6.388
+*SET,HB2_thetas(8,3,1) , 2.298
+*SET,HB2_thetas(9,1,1) , 7.748
+*SET,HB2_thetas(9,2,1) , 6.145
+*SET,HB2_thetas(9,3,1) , 2.298
+*SET,HB2_thetas(10,1,1) , 7.182
+*SET,HB2_thetas(10,2,1) , 5.581
+*SET,HB2_thetas(10,3,1) , 2.298
+*SET,HB2_thetas(11,1,1) , 6.874
+*SET,HB2_thetas(11,2,1) , 5.275
+*SET,HB2_thetas(11,3,1) , 2.298
+*SET,HB2_thetas(12,1,1) , 6.669
+*SET,HB2_thetas(12,2,1) , 5.070
+*SET,HB2_thetas(12,3,1) , 2.298
+*DIM,HB_lys_sum,ARRAY,Hbar_layers,1,1, , ,      !horizontal bar layers sum	(mm)
+*SET,HB_lys_sum(1,1,1) , 60
+*SET,HB_lys_sum(2,1,1) , 140
+*SET,HB_lys_sum(3,1,1) , 260   
+*SET,HB_lys_sum(4,1,1) , 480   
+*SET,HB_lys_sum(5,1,1) , 580   
+*SET,HB_lys_sum(6,1,1) , 680   
+*SET,HB_lys_sum(7,1,1) , 820
+*SET,HB_lys_sum(8,1,1) , 920
+*SET,HB_lys_sum(9,1,1) , 1020   
+*SET,HB_lys_sum(10,1,1) , 1240  
+*SET,HB_lys_sum(11,1,1) , 1360  
+*SET,HB_lys_sum(12,1,1) , 1440  
+*DIM,VB_lys,ARRAY,2,1,1, , ,   !vertical bar layers
+*SET,VB_lys(1,1,1) , 39
+*SET,VB_lys(2,1,1) , 1470
+*DIM,VB_thetas,ARRAY,6,1,1, , ,   !vertical bar thetas
+*SET,VB_thetas(1,1,1) , 2.298
+*SET,VB_thetas(2,1,1) , 8.662
+*SET,VB_thetas(3,1,1) , 10.275
+*SET,VB_thetas(4,1,1) , 2.298
+*SET,VB_thetas(5,1,1) , 4.994
+*SET,VB_thetas(6,1,1) , 6.593
+
+CYL4, , ,tile_R1,-tile_theta,tile_R1+tile_ib,tile_theta,tile_D	!draw tile
+CYL4, , ,tile_R1+tile_ib,-tile_theta,tile_R2-tile_ob,tile_theta,tile_D
+CYL4, , ,tile_R2-tile_ob,-tile_theta,tile_R2,tile_theta,tile_D
+KWPLAN,-1,4,3,6
+wpro,,-tile_beta,   
+VSBW,ALL
+KWPLAN,-1,1,2,5
+wpro,,tile_beta,   
+VSBW,ALL
+VDELE,1, , ,1
+VDELE,2, , ,1
+VDELE,3, , ,1
+VDELE,4, , ,1
+VDELE,5, , ,1
+VDELE,6, , ,1
+WPCSYS,-1,0 
+NUMCMP,ALL  
+
+base_Z = 0  !base_Z initialization
+*DO,i,1,Hbar_layers,1	!volume divisions !!!! maximum line number 544 !!!!
+    delta_Z = HB_lys(i,1,1)
+    base_Z = base_Z+delta_Z
+    wpof,,,delta_Z
+	VSBW,ALL
+*ENDDO
+WPCSYS,-1,0 
+wpro,VB_thetas(1,1,1),,
+wpro,,90.000000,
+VSBW,ALL
+WPCSYS,-1,0 
+wpro,-VB_thetas(1,1,1),,
+wpro,,90.000000,
+VSBW,ALL
+VGLUE,ALL
+NUMCMP,ALL  
+
+LESIZE,ALL,c_size, , , ,1, , ,1,	!mesh concrete
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,ALL   
+
+WPCSYS,-1,0 
+base_Z = 0  !base_Z initialization
+*DO,i,1,Hbar_layers,1	!draw horizontal bars
+    delta_Z = HB_lys(i,1,1)
+    base_Z = base_Z+delta_Z
+    wpof,,,delta_Z
+    FLST,2,2,8  
+    FITEM,2,0,0,base_Z
+    FITEM,2,tile_R2-tile_ob,0,base_Z   
+    CIRCLE,P51X, , , ,HB_thetas(i,1,1), ,
+    FLST,2,2,8  
+    FITEM,2,0,0,base_Z
+    FITEM,2,tile_R1+tile_ib,0,base_Z
+    CIRCLE,P51X, , , ,HB_thetas(i,1,1), ,
+    *GET,tmp_L_num,LINE,0,NUM,MAX
+    LSYMM,Y,tmp_L_num, , , ,0,0
+    LSYMM,Y,tmp_L_num-1, , , ,0,0
+    *GET,tmp_KP_num,KP,0,NUM,MAX
+    LSTR,tmp_KP_num-2,tmp_KP_num
+    LSTR,tmp_KP_num-6,tmp_KP_num-4
+*ENDDO
+
+base_Z = 0  !base_Z initialization
+CSYS,1
+WPCSYS,-1
+*DO,i,1,Hbar_layers,1	!draw horizontal bars_2
+    delta_Z = HB_lys(i,1,1)
+    base_Z = base_Z+delta_Z
+    wpof,,,delta_Z
+	*DO,j,1,3,1
+		*IF,HB2_thetas(i,j,1),NE,0,THEN
+			K, ,(tile_R1+tile_ib),HB2_thetas(i,j,1),HB_lys_sum(i,1,1),
+			K, ,tile_R2-tile_ob,HB2_thetas(i,j,1),HB_lys_sum(i,1,1),
+			*GET,tmp_KP_num,KP,0,NUM,MAX
+			LSTR,tmp_KP_num-1,tmp_KP_num
+			K, ,tile_R1+tile_ib,-HB2_thetas(i,j,1),HB_lys_sum(i,1,1),
+			K, ,tile_R2-tile_ob,-HB2_thetas(i,j,1),HB_lys_sum(i,1,1),
+			*GET,tmp_KP_num,KP,0,NUM,MAX
+			LSTR,tmp_KP_num-1,tmp_KP_num
+		*ENDIF
+	*ENDDO
+*ENDDO
+
+base_Z = 0  !base_Z initialization
+WPCSYS,-1	!draw vertical bars
+K, ,(tile_R2-tile_ob),VB_thetas(1,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),VB_thetas(4,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R2-tile_ob),-VB_thetas(1,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),-VB_thetas(4,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),VB_thetas(1,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),VB_thetas(4,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),-VB_thetas(1,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),-VB_thetas(4,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+
+K, ,(tile_R2-tile_ob),VB_thetas(2,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),VB_thetas(5,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R2-tile_ob),-VB_thetas(2,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),-VB_thetas(5,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),VB_thetas(2,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),VB_thetas(5,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),-VB_thetas(2,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),-VB_thetas(5,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+
+K, ,(tile_R2-tile_ob),VB_thetas(3,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),VB_thetas(6,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R2-tile_ob),-VB_thetas(3,1,1),VB_lys(1,1,1),
+K, ,(tile_R2-tile_ob),-VB_thetas(6,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),VB_thetas(3,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),VB_thetas(6,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+K, ,(tile_R1+tile_ib),-VB_thetas(3,1,1),VB_lys(1,1,1),
+K, ,(tile_R1+tile_ib),-VB_thetas(6,1,1),VB_lys(2,1,1),
+*GET,tmp_KP_num,KP,0,NUM,MAX
+LSTR,tmp_KP_num-1,tmp_KP_num
+
+*GET,tmp_L_num,LINE,0,NUM,MAX	!mesh bars
+LSEL,R, , ,545	!!!! "544" was from line 141 !!!!
+*DO,i,545,tmp_L_num,1
+	LSEL,A, , ,i
+*ENDDO
+LATT,2,1,2, , , ,   
+LESIZE,ALL,b_size, , , ,1, , ,1,
+LMESH,ALL
+ALLSEL,ALL  
+NUMMRG,ALL, , , ,LOW   
+
+FINISH
+/SOL
+*DIM,TIME,ARRAY,3,1,1, , ,	!define blast load  
+*SET,TIME(2,1,1) , 1
+*SET,TIME(3,1,1) , 2
+*DIM,LOAD,ARRAY,3,1,1, , ,  
+*SET,LOAD(1,1,1) , 100  
+*SET,LOAD(2,1,1) , 10   
+
+FLST,5,78,5,ORDE,78 	!define side constrains
+FITEM,5,2   
+FITEM,5,5   
+FITEM,5,14  
+FITEM,5,16  
+FITEM,5,22  
+FITEM,5,-23 
+FITEM,5,27  
+FITEM,5,-28 
+FITEM,5,32  
+FITEM,5,-33 
+FITEM,5,38  
+FITEM,5,-39 
+FITEM,5,41  
+FITEM,5,-42 
+FITEM,5,48  
+FITEM,5,-49 
+FITEM,5,62  
+FITEM,5,-63 
+FITEM,5,66  
+FITEM,5,68  
+FITEM,5,-69 
+FITEM,5,73  
+FITEM,5,-74 
+FITEM,5,87  
+FITEM,5,-88 
+FITEM,5,100 
+FITEM,5,-101
+FITEM,5,105 
+FITEM,5,112 
+FITEM,5,116 
+FITEM,5,121 
+FITEM,5,130 
+FITEM,5,140 
+FITEM,5,142 
+FITEM,5,145 
+FITEM,5,153 
+FITEM,5,158 
+FITEM,5,167 
+FITEM,5,169 
+FITEM,5,178 
+FITEM,5,181 
+FITEM,5,183 
+FITEM,5,190 
+FITEM,5,195 
+FITEM,5,201 
+FITEM,5,204 
+FITEM,5,210 
+FITEM,5,216 
+FITEM,5,220 
+FITEM,5,231 
+FITEM,5,235 
+FITEM,5,244 
+FITEM,5,249 
+FITEM,5,254 
+FITEM,5,257 
+FITEM,5,259 
+FITEM,5,267 
+FITEM,5,272 
+FITEM,5,275 
+FITEM,5,279 
+FITEM,5,282 
+FITEM,5,288 
+FITEM,5,371 
+FITEM,5,375 
+FITEM,5,378 
+FITEM,5,380 
+FITEM,5,383 
+FITEM,5,386 
+FITEM,5,388 
+FITEM,5,391 
+FITEM,5,394 
+FITEM,5,396 
+FITEM,5,398 
+FITEM,5,401 
+FITEM,5,403 
+FITEM,5,406 
+FITEM,5,409 
+FITEM,5,411 
+ASEL,S, , ,P51X 
+NSLA,R,1
+CM,FIX,NODE 
+CMSEL,A,FIX 
+EDLOAD,ADD,FZ,0,FIX,TIME,LOAD, 0, , , , ,   
+ALLSEL,ALL
+
+FLST,5,39,5,ORDE,39		!define load 
+FITEM,5,3   
+FITEM,5,10  
+FITEM,5,19  
+FITEM,5,26  
+FITEM,5,35  
+FITEM,5,45  
+FITEM,5,52  
+FITEM,5,60  
+FITEM,5,75  
+FITEM,5,85  
+FITEM,5,91  
+FITEM,5,97  
+FITEM,5,104 
+FITEM,5,108 
+FITEM,5,128 
+FITEM,5,137 
+FITEM,5,148 
+FITEM,5,164 
+FITEM,5,173 
+FITEM,5,187 
+FITEM,5,208 
+FITEM,5,225 
+FITEM,5,238 
+FITEM,5,264 
+FITEM,5,285 
+FITEM,5,298 
+FITEM,5,305 
+FITEM,5,311 
+FITEM,5,317 
+FITEM,5,321 
+FITEM,5,326 
+FITEM,5,331 
+FITEM,5,335 
+FITEM,5,339 
+FITEM,5,345 
+FITEM,5,351 
+FITEM,5,355 
+FITEM,5,362 
+FITEM,5,368 
+ASEL,S, , ,P51X 
+NSLA,R,1
+CM,LOADING,NODE 
+CMSEL,A,LOADING 
+EDLOAD,ADD,FX,0,LOADING,TIME,LOAD, 0, , , , ,   
+ALLSEL,ALL
+
+TIME,4, 
+EDOPT,ADD,blank,LSDYNA  
+EDRST, ,0.1,
+EDHTIME, ,1,  
+EDDUMP, ,1e3, 
+EDWRITE,LSDYNA,'tile','k',' '
