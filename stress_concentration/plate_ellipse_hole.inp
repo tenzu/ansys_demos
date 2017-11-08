@@ -1,0 +1,83 @@
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+
+a = 0.03    !half length of plate (m)
+b = a   !half width of plate (m)
+t = 0.003   !thickness of plate (m)
+r1 = 0.004   !long radius of ellipse (m)
+r12 = 0.5   !r2/r1
+r2 = r12*r1   !short radius of ellipse (m)
+r3 = r1*5 !mesh refine zone radius (m)
+
+/PREP7  
+ET,1,SOLID185   
+MPTEMP,,,,,,,,  
+MPTEMP,1,0  
+MPDATA,EX,1,,2e11   
+MPDATA,PRXY,1,,0.3  
+RECTNG,,a,,b, 
+
+CSWPLA,11,1,r12,r1,
+K,,-r1,,,
+K,,r1,,,
+*GET,KK,KP,0,NUM,MAX
+L,KK-1,KK
+CSYS,0
+*GET,LL,LINE,0,NUM,MAX
+LSYMM,Y,LL, , , ,0,0
+wpro,,-90.000000,   
+wpro,,,-90.000000   
+LSBW,ALL
+WPCSYS,-1,0 
+LGLUE,7,8,9,10
+AL,5,6,7,8
+PCIRC,r3, ,0,360,
+AOVLAP,ALL
+ADELE,4, , ,1
+ADELE,7, , ,1
+ADELE,8, , ,1
+VOFFST,5,t/2, ,  
+VOFFST,5,-t/2, ,  
+VOFFST,6,t/2, ,  
+VOFFST,6,-t/2, ,  
+BLOCK,,-a,,b,-t/2,t/2, 
+VGLUE,ALL
+
+LESIZE,ALL,0.0005, , , ,1, , ,1,    !element size for inner part
+VMESH,1,2
+LESIZE,ALL,0.001, , , ,1, , ,1, !element size for outer part
+VSWEEP,6
+VSWEEP,7
+VSWEEP,8
+
+ASEL,S,LOC,X,-a  
+NSLA,R,1
+D,ALL, , , , , ,UX, , , , , !left side boundary condition
+ALLSEL,ALL
+ASEL,S,LOC,Y,0  
+NSLA,R,1
+D,ALL, , , , , ,UY, , , , , !bottom side boundary condition
+ALLSEL,ALL
+ASEL,S,LOC,Y,b  
+NSLA,R,1
+D,ALL, , , , , ,UZ, , , , , !upper side boundary condition
+ALLSEL,ALL
+ASEL,S,LOC,X,a  
+NSLA,R,1
+SFA,ALL,1,PRES,10000   !right side displacement boundary
+ALLSEL,ALL
+
+/SOL
+SOLVE   
+
+/POST1  
+/DSCALE,ALL,1.0 
+PLNSOL, S,X, 0,1.0  !show X-stress result
+/EXPAND,2,RECT,HALF,,0.00001
+/REPLOT 
+
+NSEL,S,LOC,X,0  
+NSEL,R,LOC,Y,r2 
+PRNSOL,S,COMP
+ALLSEL,ALL
