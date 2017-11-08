@@ -1,0 +1,120 @@
+/NOPR
+KEYW,PR_SET,1
+KEYW,PR_STRUC,1
+KEYW,LSDYNA,1
+KEYW,PR_DYNA,1
+/CWD,'C:\Users\Cliff\Desktop\tmp\3D_fibre\3D_fibres'
+
+PI = acos(-1)
+r = 2.5	!spiral fibre rotation radius (mm)
+S = 10	!spiral fibre pitch (mm)
+n = 60	!division in single pitch (from 1/4 hollow cylindar, minus 3 overlapped nodes)
+P_d = n*1.5   !total sub-pitch number
+P_num = P_d/n	!spiral fibre total pitch number
+theta = P_num*360	!spiral fibre total rotation angle (DEG)
+bargin = r*0.1  !bargin from fibre to outer cylindar (mm)
+K_num = P_num*n+1	!total node number in one spiral fibre
+L_num = K_num-1 !total element number in one spiral fibre
+ef_size = 2 !element size for fibre (mm)
+ec_size = 2 !element size for cylindar (mm)
+r_beam = 0.56   !radius of fibre section (mm)
+
+/VIEW,1,1,1,1   
+/ANG,1  
+/REP,FAST 
+
+/PREP7
+ET,1,SOLID164   
+ET,2,LINK160
+R,1,r_beam,  !section area for fibre
+MP,DENS,1,0.0024    !material properties
+MP,EX,1,2e4
+MP,NUXY,1,0.2
+MP,DENS,2,0.0078
+MP,EX,2,2e5
+MP,NUXY,2,0.28
+
+CYL4, , ,r+bargin,0,r,90,S*P_num   !draw hollow cylindar with bargins
+VATT,1,1,1,       0
+LESIZE,6, , ,1, , , , ,1 
+LESIZE,7, , ,n/4, , , , ,1 
+LESIZE,9, , ,n*P_num, , , , ,0  
+VSWEEP,ALL
+VSYMM,X,ALL, , , ,0,0  
+VSYMM,Y,ALL, , , ,0,0  
+NUMMRG,ALL, , , ,LOW
+
+*DIM,C_NODES,ARRAY,n*P_num+1,1,1, , ,
+*GET,ii,NODE,0,NUM,MAX !ii for temporarily store maximum node number
+CSYS,1
+*DO,i,1,n*P_num+1,1 !draw nodes for single fibre
+    NSEL,S,LOC,X,r
+    theta1=360*(i-1)/n-360/n/3
+    theta2=360*(i-1)/n+360/n/3
+    NSEL,R,LOC,Y,theta1,theta2
+    gama1=S/n*(i-1)-S/n/4
+    gama2=S/n*(i-1)+S/n/4
+    NSEL,R,LOC,Z,gama1,gama2
+    *GET,ijk,NODE,0,NUM,MIN
+    *SET,C_NODES(i,1,1),ijk
+    *GET,iii,NODE,ijk,LOC,X
+    *GET,jjj,NODE,ijk,LOC,Y
+    *GET,kkk,NODE,ijk,LOC,Z
+    N,,iii,jjj,kkk
+    ALLSEL,ALL
+*ENDDO
+
+CSYS,0
+TYPE,2   
+MAT,2
+REAL,1   
+ESYS,0   
+SECNUM, 
+*DO,i,1,N*P_num,1   !draw beam elements for single fibre
+    E,ii+i,ii+i+1
+*ENDDO
+
+*DO,i,1,n*P_num+1,1 !concrete nodes for 1D contact
+    *SET,j,C_NODES(i,1,1)
+    *IF,i,eq,1,then
+        NSEL,S,,,j
+    *ELSE
+        NSEL,A,,,j
+    *ENDIF
+*ENDDO
+CM,C_NODES,NODE 
+CMSEL,A,C_NODES 
+
+ESEL,S,MAT,,2   !fibre nodes for 1D contact
+NSLE,S  
+CM,F_NODES,NODE 
+CMSEL,A,F_NODES 
+ALLSEL,ALL
+
+*DIM,load,ARRAY,3,1,1, , ,  
+*SET,LOAD(2,1,1) ,0.1  
+*SET,LOAD(3,1,1) ,0.1  
+*DIM,time,ARRAY,3,1,1, , ,  
+*SET,TIME(2,1,1) , 1
+*SET,TIME(3,1,1) , 5
+EDLOAD,ADD,FX,0,C_NODES,TIME,LOAD, 0, , , , ,   
+EDLOAD,ADD,FY,0,F_NODES,TIME,LOAD, 0, , , , ,   
+DA,1,ALL,
+DA,7,ALL,
+DA,13,ALL,
+DA,19,ALL,
+
+ASEL,R,LOC,Z,S*P_num
+NSLA,S,1
+CM,LOAD,NODE 
+CMSEL,A,LOAD
+EDLOAD,ADD,FZ,0,LOAD,TIME,LOAD, 0, , , , ,   
+ALLSEL,ALL
+
+FINISH  
+/SOL
+TIME,3, 
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0, 
+EDWRITE,LSDYNA,'tmp','k',' '
