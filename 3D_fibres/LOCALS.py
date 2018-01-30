@@ -17,13 +17,13 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 thickness = 2 * r_disk * td_ratio  # disk thickness (mm)
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 2  # number of fibres
+f_num = 4  # number of fibres
 
 # original segment center for cylindars (fibres)
-r = 2.5  # spiral fibre rotation radius (mm)
+r = 1.5  # spiral fibre rotation radius (mm)
 s = 5  # spiral fibre pitch (mm)
-n = 8  # division in single pitch (n equals to 2**?)
-p = 1.5  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+n = 4  # division in single pitch (n equals to 2**?)
+p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r / 2) ** 2 + (s * p / 2) ** 2)  # radius of sphere which covers whole cylindar (mm)
@@ -115,10 +115,8 @@ for i in range(len(local_CSs)):
         2] + '\t' + '%11.5f' % local_CSs[i][3] + '\t' + '%11.5f' % local_CSs[i][4] + '\t' + '%11.5f' % local_CSs[i][
                  5] + '\n')
 f2.close()
-# plot fibres in matplob
-RD1 = np.linspace(0, 2 * np.pi, 8)
-RD2 = np.linspace(0, np.pi, 8)
-# prepare for matlibplot plotting
+
+# plot fibres in matplotlib
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlim([-r_disk, r_disk])
@@ -127,10 +125,12 @@ ax.set_zlim([-thickness / 2, thickness / 2])  # for plotting unstreched model
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
-for i in range(0, len(sph_ctrs) // 2):
-    ax.scatter(sph_ctrs[i][0], sph_ctrs[i][1], sph_ctrs[i][2], c='r')  # 绘制数据点
-for i in range(len(sph_ctrs) // 2, 2 * len(sph_ctrs) // 2):
-    ax.scatter(sph_ctrs[i][0], sph_ctrs[i][1], sph_ctrs[i][2], c='b')  # 绘制数据点
+sphere_color = ['r', 'g', 'b', 'y', 'r', 'g', 'b', 'y', 'r', 'g', 'b', 'y', 'r', 'g', 'b', 'y']
+for i in range(0, f_num, 1):
+    for j in range(i * len(org_ctrs), (i + 1) * len(org_ctrs), 1):
+        ax.scatter(sph_ctrs[j][0], sph_ctrs[j][1], sph_ctrs[j][2], c=sphere_color[i])  # draw spheres (scatters)
+# RD1 = np.linspace(0, 2 * np.pi, 8)
+# RD2 = np.linspace(0, np.pi, 8)
 # for i in range(len(sph_ctrs)//2, 2*len(sph_ctrs)//2):
 #    cx = sph_ctrs[i][0] + r_sphere * np.outer(np.cos(RD1), np.sin(RD2))
 #    cy = sph_ctrs[i][1] + r_sphere * np.outer(np.sin(RD1), np.sin(RD2))
