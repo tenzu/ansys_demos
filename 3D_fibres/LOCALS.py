@@ -111,14 +111,16 @@ f_locations()
 # write location for fibres
 f1 = open('sph_ctrs.txt', 'w')
 for i in range(len(sph_ctrs)):
-    f1.write('%11.5f' % sph_ctrs[i][0] + '\t' + '%11.5f' % sph_ctrs[i][1] + '\t' + '%11.5f' % sph_ctrs[i][2] + '\n')
+    f1.write('%11.5f' % sph_ctrs[i][0] + ',' + '%11.5f' % sph_ctrs[i][1] + ',' + '%11.5f' % sph_ctrs[i][2] + '\n')
 f1.close()
-f2 = open('local_CSs.txt', 'w')
+f2 = open('CS_trans.txt', 'w')
 for i in range(len(local_CSs)):
-    f2.write('%11.5f' % local_CSs[i][0] + '\t' + '%11.5f' % local_CSs[i][1] + '\t' + '%11.5f' % local_CSs[i][
-        2] + '\t' + '%11.5f' % local_CSs[i][3] + '\t' + '%11.5f' % local_CSs[i][4] + '\t' + '%11.5f' % local_CSs[i][
-                 5] + '\n')
+    f2.write('%11.5f' % local_CSs[i][0] + ',' + '%11.5f' % local_CSs[i][1] + ',' + '%11.5f' % local_CSs[i][2] + '\n')
 f2.close()
+f3 = open('CS_rotat.txt', 'w')
+for i in range(len(local_CSs)):
+    f3.write('%11.5f' % local_CSs[i][3] + ',' + '%11.5f' % local_CSs[i][4] + ',' + '%11.5f' % local_CSs[i][5] + '\n')
+f3.close()
 
 
 # plot spheres in matplotlib
