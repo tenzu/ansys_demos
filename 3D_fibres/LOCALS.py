@@ -20,7 +20,7 @@ f_num = 4  # number of fibres
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
 s = 5  # spiral fibre pitch (mm)
-n = 4  # division in single pitch (n equals to 2**?)
+n = 8  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
