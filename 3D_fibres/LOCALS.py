@@ -15,7 +15,7 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 thickness = 2 * r_disk * td_ratio  # disk thickness (mm)
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 4  # number of fibres
+f_num = 8  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
@@ -24,7 +24,7 @@ n = 8  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
-r_cylindar = math.sqrt((r / 2) ** 2 + (s * p / 2) ** 2)  # radius of sphere which covers whole cylindar (mm)
+r_cylindar = math.sqrt((r / 2) ** 2 + (s * p) ** 2)  # radius of sphere which covers whole cylindar (mm)
 r_sphere = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 L_sphere = math.ceil((s * p + 2 * r_sphere) / r_sphere)  # number of spheres in cylindar longitudinal direction
 n_sphs = n * odd_int(L_sphere)  # number of spheres in one cylindar
@@ -147,4 +147,4 @@ def plt_spheres():
     plt.show()
 
 
-plt_spheres()
+# plt_spheres()
