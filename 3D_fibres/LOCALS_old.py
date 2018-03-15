@@ -15,22 +15,20 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 thickness = 2 * r_disk * td_ratio  # disk thickness (mm)
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 12  # number of fibres
+f_num = 8  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
 s = 5  # spiral fibre pitch (mm)
-n = 32  # division in single pitch (n equals to 2**?)
+n = 8  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r / 2) ** 2 + (s * p) ** 2)  # radius of sphere which covers whole cylindar (mm)
 r_sphere = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 L_sphere = math.ceil((s * p + 2 * r_sphere) / r_sphere)  # number of spheres in cylindar longitudinal direction
-# n_sphs = n * odd_int(L_sphere)  # number of spheres in one cylindar
-n_sphs2 = int(n * p + 1) # number of spheres in one cylindar
-#sph_ctrs = np.zeros((f_num * n_sphs, 3))  # centers of spheres
-sph_ctrs = np.zeros((f_num * n_sphs2, 3))  # centers of spheres
+n_sphs = n * odd_int(L_sphere)  # number of spheres in one cylindar
+sph_ctrs = np.zeros((f_num * n_sphs, 3))  # centers of spheres
 rd = np.linspace(0, 2 * math.pi, n + 1)  # angles of sphere centers
 local_CSs = []  # local cordinate systems for fibres
 
@@ -55,31 +53,19 @@ def rdm_CS():
     return (rdm_CS)
 
 
-## generate original centers of spheres
-#def s_ctrs():
-#    s_ctrs = np.zeros((n_sphs, 3))  # sphere centers in cylindar (original zeros)
-#    # generate list of [0,1,-1,2,-2,3,-3,...]
-#    tmp_list = [i for i in range(-(n_sphs // n // 2), (n_sphs // n // 2) + 1, 1)]
-#    for i in range(0, n_sphs, 1):
-#        s_ctrs[i][0] = (r + r_sphere) * math.cos(rd[i % n])
-#        s_ctrs[i][1] = (r + r_sphere) * math.sin(rd[i % n])
-#        s_ctrs[i][2] = s * p / L_sphere * tmp_list[i // n]
-#    return (s_ctrs)
-
 # generate original centers of spheres
-def s_ctrs2():
-    s_ctrs = np.zeros((n_sphs2, 3))  # sphere centers in cylindar (original zeros)
+def s_ctrs():
+    s_ctrs = np.zeros((n_sphs, 3))  # sphere centers in cylindar (original zeros)
     # generate list of [0,1,-1,2,-2,3,-3,...]
-    tmp_list = [i for i in range(-(n_sphs2 // n // 2), (n_sphs2 // n // 2) + 1, 1)]
-    for i in range(0, n_sphs2, 1):
-        s_ctrs[i][0] = r * math.cos(rd[i % n])
-        s_ctrs[i][1] = r * math.sin(rd[i % n])
-        s_ctrs[i][2] = s / n * i
+    tmp_list = [i for i in range(-(n_sphs // n // 2), (n_sphs // n // 2) + 1, 1)]
+    for i in range(0, n_sphs, 1):
+        s_ctrs[i][0] = (r + r_sphere) * math.cos(rd[i % n])
+        s_ctrs[i][1] = (r + r_sphere) * math.sin(rd[i % n])
+        s_ctrs[i][2] = s * p / L_sphere * tmp_list[i // n]
     return (s_ctrs)
 
 
-#org_ctrs = s_ctrs()
-org_ctrs = s_ctrs2()
+org_ctrs = s_ctrs()
 
 
 # locations for fibres
@@ -88,8 +74,7 @@ def f_locations():
     while f_cont < f_num:
         f_avlb = 1
         tmp_CS = rdm_CS()  # generate a temporary local system
-        #for i in range(0, n_sphs, 1):
-        for i in range(0, n_sphs2, 1):
+        for i in range(0, n_sphs, 1):
             theta1 = tmp_CS[3]
             theta2 = tmp_CS[4]
             theta3 = tmp_CS[5]
@@ -101,17 +86,12 @@ def f_locations():
                 [[math.cos(theta3), -math.sin(theta3), 0], [math.sin(theta3), math.cos(theta3), 0], [0, 0, 1]])
             before_rotation = np.array([org_ctrs[i, 0], org_ctrs[i, 1], org_ctrs[i, 2]])
             after_rotation = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation)))
-            #sph_ctrs[i + (f_cont) * (n_sphs), 0] = after_rotation[0] + tmp_CS[0]
-            #sph_ctrs[i + (f_cont) * (n_sphs), 1] = after_rotation[1] + tmp_CS[1]
-            #sph_ctrs[i + (f_cont) * (n_sphs), 2] = after_rotation[2] + tmp_CS[2]
-            sph_ctrs[i + (f_cont) * (n_sphs2), 0] = after_rotation[0] + tmp_CS[0]
-            sph_ctrs[i + (f_cont) * (n_sphs2), 1] = after_rotation[1] + tmp_CS[1]
-            sph_ctrs[i + (f_cont) * (n_sphs2), 2] = after_rotation[2] + tmp_CS[2]
+            sph_ctrs[i + (f_cont) * (n_sphs), 0] = after_rotation[0] + tmp_CS[0]
+            sph_ctrs[i + (f_cont) * (n_sphs), 1] = after_rotation[1] + tmp_CS[1]
+            sph_ctrs[i + (f_cont) * (n_sphs), 2] = after_rotation[2] + tmp_CS[2]
         if f_cont < f_num:
-            #for j in range((f_cont - 1) * (n_sphs), f_cont * (n_sphs)):
-            #    for k in range(1, (f_cont - 1) * (n_sphs)):
-            for j in range((f_cont - 1) * (n_sphs2), f_cont * (n_sphs2)):
-                for k in range(1, (f_cont - 1) * (n_sphs2)):
+            for j in range((f_cont - 1) * (n_sphs), f_cont * (n_sphs)):
+                for k in range(1, (f_cont - 1) * (n_sphs)):
                     if (sph_ctrs[j, 0] - sph_ctrs[k, 0]) ** 2 + (sph_ctrs[j, 1] - sph_ctrs[k, 1]) ** 2 + (
                             sph_ctrs[j, 2] - sph_ctrs[k, 2]) ** 2 > (r_sphere + r_sphere) ** 2 + min_gap:
                         f_avlb = f_avlb * 1
@@ -167,4 +147,4 @@ def plt_spheres():
     plt.show()
 
 
-plt_spheres()
+# plt_spheres()
