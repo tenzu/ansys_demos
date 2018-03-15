@@ -15,12 +15,12 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 thickness = 2 * r_disk * td_ratio  # disk thickness (mm)
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 8  # number of fibres
+f_num = 12  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
 s = 5  # spiral fibre pitch (mm)
-n = 8  # division in single pitch (n equals to 2**?)
+n = 32  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
