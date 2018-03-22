@@ -77,7 +77,6 @@ def f_locations():
             [[math.cos(theta3), -math.sin(theta3), 0], [math.sin(theta3), math.cos(theta3), 0], [0, 0, 1]])
         before_rotation = np.array([0, 0, s * p / 2])
         after_rotation = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation)))
-
         cld_ctrs[f_cont, 0] = after_rotation[0] + tmp_CS[0]
         cld_ctrs[f_cont, 1] = after_rotation[1] + tmp_CS[1]
         cld_ctrs[f_cont, 2] = after_rotation[2] + tmp_CS[2]
@@ -96,44 +95,6 @@ def f_locations():
                     sph_ctrs[k + f_cont * n_sphs, 0] = after_rotation_1[0] + tmp_CS[0]
                     sph_ctrs[k + f_cont * n_sphs, 1] = after_rotation_1[1] + tmp_CS[1]
                     sph_ctrs[k + f_cont * n_sphs, 2] = after_rotation_1[2] + tmp_CS[2]
-            f_cont += 1
-        else:
-            f_cont = f_cont
-
-
-
-def f_node_locations():
-    f_cont = 0
-    while f_cont < f_num:
-        f_avlb = 1
-        tmp_CS = rdm_CS()  # generate a temporary local system
-        for i in range(0, n_sphs, 1):
-            theta1 = tmp_CS[3]
-            theta2 = tmp_CS[4]
-            theta3 = tmp_CS[5]
-            T1_matrix = np.array(
-                [[1, 0, 0], [0, math.cos(theta1), -math.sin(theta1)], [0, math.sin(theta1), math.cos(theta1)]])
-            T2_matrix = np.array(
-                [[math.cos(theta2), 0, math.sin(theta2)], [0, 1, 0], [-math.sin(theta2), 0, math.cos(theta2)]])
-            T3_matrix = np.array(
-                [[math.cos(theta3), -math.sin(theta3), 0], [math.sin(theta3), math.cos(theta3), 0], [0, 0, 1]])
-            before_rotation = np.array([org_ctrs[i, 0], org_ctrs[i, 1], org_ctrs[i, 2]])
-            after_rotation = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation)))
-            sph_ctrs[i + (f_cont) * (n_sphs), 0] = after_rotation[0] + tmp_CS[0]
-            sph_ctrs[i + (f_cont) * (n_sphs), 1] = after_rotation[1] + tmp_CS[1]
-            sph_ctrs[i + (f_cont) * (n_sphs), 2] = after_rotation[2] + tmp_CS[2]
-        if f_cont < f_num:
-            for j in range((f_cont - 1) * (n_sphs), f_cont * (n_sphs)):
-                for k in range(1, (f_cont - 1) * (n_sphs)):
-                    if (sph_ctrs[j, 0] - sph_ctrs[k, 0]) ** 2 + (sph_ctrs[j, 1] - sph_ctrs[k, 1]) ** 2 + (
-                            sph_ctrs[j, 2] - sph_ctrs[k, 2]) ** 2 > (r_sphere + r_sphere) ** 2 + min_gap:
-                        f_avlb = f_avlb * 1
-                    else:
-                        f_avlb = f_avlb * 0
-        else:
-            break
-        if f_avlb == 1:
-            local_CSs.append(tmp_CS)
             f_cont += 1
         else:
             f_cont = f_cont
