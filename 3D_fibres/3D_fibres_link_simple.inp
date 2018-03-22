@@ -53,8 +53,8 @@ MP,NUXY,3,0.27
 	CYL4, , ,r+bargin,0,r,90,s*p   !draw hollow cylindar with bargins
 	VATT,1,1,1,0
 	*GET,ii,LINE,0,NUM,MAX !ii for temporarily storing maximum line number
-	LESIZE,ii-6, , ,1, , , , ,1
-	LESIZE,ii-5, , ,n/4, , , , ,1
+	LESIZE,ii-6, , ,1, , , , ,0
+	LESIZE,ii-5, , ,n/4, , , , ,0
 	LESIZE,ii-3, , ,n*p, , , , ,0
 	*GET,ii,VOLU,0,NUM,MAX !ii for temporarily storing maximum volumn number
 	VSWEEP,ii
@@ -132,7 +132,7 @@ WPCSYS,-1,0
 VOVLAP,ALL
 MSHAPE,1,3D
 MSHKEY,0
-LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,1,
+LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
 *GET,j_max,VOLU,0,NUM,MAX	!j_max for temporarily storing maximum volumn number
 VATT,3,1,1,0
 VMESH,j_max

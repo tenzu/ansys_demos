@@ -48,8 +48,6 @@ def rdm_CS():
 # generate original centers of spheres
 def s_ctrs():
     s_ctrs = np.zeros((n_sphs, 3))  # sphere centers in cylindar (original zeros)
-    # generate list of [0,1,-1,2,-2,3,-3,...]
-    tmp_list = [i for i in range(-(n_sphs // n // 2), (n_sphs // n // 2) + 1, 1)]
     for i in range(0, n_sphs, 1):
         s_ctrs[i][0] = r * math.cos(rd[i % n])
         s_ctrs[i][1] = r * math.sin(rd[i % n])
