@@ -15,19 +15,19 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 thickness = 2 * r_disk * td_ratio  # disk thickness (mm)
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 12  # number of fibres
+f_num = 8  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
 s = 5  # spiral fibre pitch (mm)
-n = 16  # division in single pitch (n equals to 2**?)
+n = 8  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 bargin = r * 0.1  # bargin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r / 2) ** 2 + (s * p) ** 2)  # radius of sphere which covers whole cylindar (mm)
 r_sphere = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 L_sphere = math.ceil((s * p + 2 * r_sphere) / r_sphere)  # number of spheres in cylindar longitudinal direction
-n_sphs = int(n * p + 1) # number of spheres in one cylindar
+n_sphs = n * odd_int(L_sphere)  # number of spheres in one cylindar
 sph_ctrs = np.zeros((f_num * n_sphs, 3))  # centers of spheres
 rd = np.linspace(0, 2 * math.pi, n + 1)  # angles of sphere centers
 local_CSs = []  # local cordinate systems for fibres
@@ -45,27 +45,27 @@ def rdm_CS():
             rdm_CS[i] = random.uniform(-math.sqrt(r_ ** 2 - rdm_CS[0] ** 2),
                                        math.sqrt(r_ ** 2 - rdm_CS[0] ** 2))
         elif i == 2:
-            # t~=2*r_disk*td_ratio-r_cylindar-min_gap, z between (-t~,t~)
-            t_ = 2 * r_disk * td_ratio - r_cylindar - min_gap
-            rdm_CS[i] = random.uniform(-t_/2, t_/2)
+            # t~=2*r_disk*td_ratio, z between (-(t~/2-s*p/2),t~/2-s*p/2)
+            t_ = 2 * r_disk * td_ratio - min_gap
+            rdm_CS[i] = random.uniform(-(t_ / 3 - s * p / 2), t_ / 2 - s * p / 2)
         else:
             rdm_CS[i] = random.uniform(0, 360)
     return (rdm_CS)
 
+
 # generate original centers of spheres
-def s_ctrs2():
+def s_ctrs():
     s_ctrs = np.zeros((n_sphs, 3))  # sphere centers in cylindar (original zeros)
     # generate list of [0,1,-1,2,-2,3,-3,...]
     tmp_list = [i for i in range(-(n_sphs // n // 2), (n_sphs // n // 2) + 1, 1)]
     for i in range(0, n_sphs, 1):
-        s_ctrs[i][0] = r * math.cos(rd[i % n])
-        s_ctrs[i][1] = r * math.sin(rd[i % n])
-        s_ctrs[i][2] = s / n * i
+        s_ctrs[i][0] = (r + r_sphere) * math.cos(rd[i % n])
+        s_ctrs[i][1] = (r + r_sphere) * math.sin(rd[i % n])
+        s_ctrs[i][2] = s * p / L_sphere * tmp_list[i // n]
     return (s_ctrs)
 
 
-#org_ctrs = s_ctrs()
-org_ctrs = s_ctrs2()
+org_ctrs = s_ctrs()
 
 
 # locations for fibres
@@ -137,7 +137,14 @@ def plt_spheres():
     for i in range(0, f_num, 1):
         for j in range(i * len(org_ctrs), (i + 1) * len(org_ctrs), 1):
             ax.scatter(sph_ctrs[j][0], sph_ctrs[j][1], sph_ctrs[j][2], c=sphere_color[i])  # draw spheres (scatters)
+    # RD1 = np.linspace(0, 2 * np.pi, 8)
+    # RD2 = np.linspace(0, np.pi, 8)
+    # for i in range(len(sph_ctrs)//2, 2*len(sph_ctrs)//2):
+    #    cx = sph_ctrs[i][0] + r_sphere * np.outer(np.cos(RD1), np.sin(RD2))
+    #    cy = sph_ctrs[i][1] + r_sphere * np.outer(np.sin(RD1), np.sin(RD2))
+    #    cz = sph_ctrs[i][2] + r_sphere * np.outer(np.ones(np.size(RD1)), np.cos(RD2))
+    #    ax.plot_surface(cx, cy, cz, color='b')
     plt.show()
 
 
-plt_spheres()
+# plt_spheres()

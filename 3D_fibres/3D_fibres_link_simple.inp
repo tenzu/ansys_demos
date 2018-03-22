@@ -3,7 +3,7 @@ KEYW,PR_SET,1
 KEYW,PR_STRUC,1
 KEYW,LSDYNA,1
 KEYW,PR_DYNA,1
-!/CWD,'C:\Users\Cliff\Desktop\tmp\3D_fibre\3D_fibres'
+!/CWD,'C:\Users\Tenzu\Desktop\tmp\3D_fibres'
 
 PI = acos(-1)
 r_disk = 37.5	!disk radius (mm)
@@ -17,8 +17,6 @@ theta = p*360	!spiral fibre total rotation angle (DEG)
 bargin = r*0.1  !bargin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
-ef_size = 2 !element size for fibre (mm)
-ec_size = 2 !element size for cylindar (mm)
 r_beam = 0.56   !radius of fibre section (mm)
 f_num = 12	!number of fibres
 
@@ -32,6 +30,9 @@ MP,NUXY,1,0.2
 MP,DENS,2,0.0078
 MP,EX,2,2e5
 MP,NUXY,2,0.28
+MP,DENS,3,0.0078
+MP,EX,3,2e5
+MP,NUXY,3,0.27
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
 
@@ -133,7 +134,7 @@ MSHAPE,1,3D
 MSHKEY,0
 LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,1,
 *GET,j_max,VOLU,0,NUM,MAX	!j_max for temporarily storing maximum volumn number
-VATT,1,1,1,0
+VATT,3,1,1,0
 VMESH,j_max
 
 FINISH
