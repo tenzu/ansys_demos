@@ -14,7 +14,7 @@ s = 5	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n equals to 2**?)
 p = 1.25	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
-bargin = r*0.1  !bargin from fibre to outer cylindar (mm)
+margin = 0.2  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)
@@ -50,7 +50,7 @@ MP,NUXY,3,0.27
 	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
 
 	CSYS,11,
-	CYL4, , ,r+bargin,0,r,90,s*p   !draw hollow cylindar with bargins
+	CYL4, , ,r+margin,0,r,90,s*p   !draw hollow cylindar with margins
 	VATT,1,1,1,0
 	*GET,ii,LINE,0,NUM,MAX !ii for temporarily storing maximum line number
 	LESIZE,ii-6, , ,1, , , , ,0

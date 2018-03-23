@@ -15,7 +15,8 @@ n = 16  # division in single pitch (n equals to 2**?)
 p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 margin = 0.2  # margin from fibre to outer cylindar (mm)
-r_cylindar = math.sqrt((r + margin) ** 2 + (s * p / 2) ** 2) * 1.2  # radius of sphere which covers whole cylindar (mm), 1.2 for additional margin
+r_cylindar = math.sqrt((r + margin) ** 2 + (
+            s * p / 2) ** 2) * 1.2  # radius of sphere which covers whole cylindar (mm), 1.2 for additional margin
 r_sph = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 n_sph = int(n * p + 1)  # number of spheres in one cylindar
 cld_ctr = np.zeros((f_num, 3))  # center of cylindars
@@ -110,13 +111,15 @@ def b1_ctrs():
         y_b1 = random.uniform(-math.sqrt(x_ ** 2 - x_b1 ** 2), math.sqrt(x_ ** 2 - x_b1 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b1 - 2 * min_gap
         z_b1 = random.uniform(-z_ / 2, z_ / 2)
-        for i in range(0, int(f_num * (n * p + 1)),1):
-            if (sph_ctr[i, 0] - x_b1) ** 2 + (sph_ctr[i, 1] - y_b1) ** 2 +(sph_ctr[i, 2] - z_b1) ** 2 > (r_sph + r_b1) ** 2 + min_gap:
+        for i in range(0, int(f_num * (n * p + 1)), 1):
+            if (sph_ctr[i, 0] - x_b1) ** 2 + (sph_ctr[i, 1] - y_b1) ** 2 + (sph_ctr[i, 2] - z_b1) ** 2 > (
+                    r_sph + r_b1) ** 2 + min_gap:
                 b1_avlb = b1_avlb * 1
             else:
                 b1_avlb = b1_avlb * 0
-        for i in range(0, b1_cont,1):
-            if (b1_ctr[i, 0] - x_b1) ** 2 + (b1_ctr[i, 1] - y_b1) ** 2 + (b1_ctr[i, 2] - z_b1) ** 2 > (b1_ctr[i, 3] + r_b1) ** 2 + min_gap:
+        for i in range(0, b1_cont, 1):
+            if (b1_ctr[i, 0] - x_b1) ** 2 + (b1_ctr[i, 1] - y_b1) ** 2 + (b1_ctr[i, 2] - z_b1) ** 2 > (
+                    b1_ctr[i, 3] + r_b1) ** 2 + min_gap:
                 b1_avlb = b1_avlb * 1
             else:
                 b1_avlb = b1_avlb * 0
@@ -129,6 +132,7 @@ def b1_ctrs():
         else:
             b1_cont = b1_cont
 
+
 # Location for aggregate type 2
 def b2_ctrs():
     b2_cont = 0  # aggregate counter
@@ -140,18 +144,21 @@ def b2_ctrs():
         y_b2 = random.uniform(-math.sqrt(x_ ** 2 - x_b2 ** 2), math.sqrt(x_ ** 2 - x_b2 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b2 - 2 * min_gap
         z_b2 = random.uniform(-z_ / 2, z_ / 2)
-        for i in range(0, int(f_num * (n * p + 1)),1):
-            if (sph_ctr[i, 0] - x_b2) ** 2 + (sph_ctr[i, 1] - y_b2) ** 2 + (sph_ctr[i, 2] - z_b2) ** 2 > (r_sph + r_b2) ** 2 + min_gap:
+        for i in range(0, int(f_num * (n * p + 1)), 1):
+            if (sph_ctr[i, 0] - x_b2) ** 2 + (sph_ctr[i, 1] - y_b2) ** 2 + (sph_ctr[i, 2] - z_b2) ** 2 > (
+                    r_sph + r_b2) ** 2 + min_gap:
                 b2_avlb = b2_avlb * 1
             else:
                 b2_avlb = b2_avlb * 0
-        for i in range(0, b1_num,1):
-            if (b1_ctr[i, 0] - x_b2) ** 2 + (b1_ctr[i, 1] - y_b2) ** 2 + (b1_ctr[i, 2] - z_b2) ** 2 > (b1_ctr[i, 3] + r_b2) ** 2 + min_gap:
+        for i in range(0, b1_num, 1):
+            if (b1_ctr[i, 0] - x_b2) ** 2 + (b1_ctr[i, 1] - y_b2) ** 2 + (b1_ctr[i, 2] - z_b2) ** 2 > (
+                    b1_ctr[i, 3] + r_b2) ** 2 + min_gap:
                 b2_avlb = b2_avlb * 1
             else:
                 b2_avlb = b2_avlb * 0
-        for i in range(0, b2_cont,1):
-            if (b2_ctr[i, 0] - x_b2) ** 2 + (b2_ctr[i, 1] - y_b2) ** 2 + (b2_ctr[i, 2] - z_b2) ** 2 > (b2_ctr[i, 3] + r_b2) ** 2 + min_gap:
+        for i in range(0, b2_cont, 1):
+            if (b2_ctr[i, 0] - x_b2) ** 2 + (b2_ctr[i, 1] - y_b2) ** 2 + (b2_ctr[i, 2] - z_b2) ** 2 > (
+                    b2_ctr[i, 3] + r_b2) ** 2 + min_gap:
                 b2_avlb = b2_avlb * 1
             else:
                 b2_avlb = b2_avlb * 0
@@ -164,6 +171,7 @@ def b2_ctrs():
         else:
             b2_cont = b2_cont
 
+
 # Location for aggregate type 3
 def b3_ctrs():
     b3_cont = 0  # aggregate counter
@@ -175,23 +183,27 @@ def b3_ctrs():
         y_b3 = random.uniform(-math.sqrt(x_ ** 2 - x_b3 ** 2), math.sqrt(x_ ** 2 - x_b3 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b3 - 2 * min_gap
         z_b3 = random.uniform(-z_ / 2, z_ / 2)
-        for i in range(0, int(f_num * (n * p + 1)),1):
-            if (sph_ctr[i, 0] - x_b3) ** 2 + (sph_ctr[i, 1] - y_b3) ** 2 + (sph_ctr[i, 2] - z_b3) ** 2 > (r_sph + r_b3) ** 2 + min_gap:
+        for i in range(0, int(f_num * (n * p + 1)), 1):
+            if (sph_ctr[i, 0] - x_b3) ** 2 + (sph_ctr[i, 1] - y_b3) ** 2 + (sph_ctr[i, 2] - z_b3) ** 2 > (
+                    r_sph + r_b3) ** 2 + min_gap:
                 b3_avlb = b3_avlb * 1
             else:
                 b3_avlb = b3_avlb * 0
-        for i in range(0, b1_num,1):
-            if (b1_ctr[i, 0] - x_b3) ** 2 + (b1_ctr[i, 1] - y_b3) ** 2 + (b1_ctr[i, 2] - z_b3) ** 2 > (b1_ctr[i, 3] + r_b3) ** 2 + min_gap:
+        for i in range(0, b1_num, 1):
+            if (b1_ctr[i, 0] - x_b3) ** 2 + (b1_ctr[i, 1] - y_b3) ** 2 + (b1_ctr[i, 2] - z_b3) ** 2 > (
+                    b1_ctr[i, 3] + r_b3) ** 2 + min_gap:
                 b3_avlb = b3_avlb * 1
             else:
                 b3_avlb = b3_avlb * 0
-        for i in range(0, b2_num,1):
-            if (b2_ctr[i, 0] - x_b3) ** 2 + (b2_ctr[i, 1] - y_b3) ** 2 + (b2_ctr[i, 2] - z_b3) ** 2 > (b2_ctr[i, 3] + r_b3) ** 2 + min_gap:
+        for i in range(0, b2_num, 1):
+            if (b2_ctr[i, 0] - x_b3) ** 2 + (b2_ctr[i, 1] - y_b3) ** 2 + (b2_ctr[i, 2] - z_b3) ** 2 > (
+                    b2_ctr[i, 3] + r_b3) ** 2 + min_gap:
                 b3_avlb = b3_avlb * 1
             else:
                 b3_avlb = b3_avlb * 0
-        for i in range(0, b3_cont,1):
-            if (b3_ctr[i, 0] - x_b3) ** 2 + (b3_ctr[i, 1] - y_b3) ** 2 + (b3_ctr[i, 2] - z_b3) ** 2 > (b3_ctr[i, 3] + r_b3) ** 2 + min_gap:
+        for i in range(0, b3_cont, 1):
+            if (b3_ctr[i, 0] - x_b3) ** 2 + (b3_ctr[i, 1] - y_b3) ** 2 + (b3_ctr[i, 2] - z_b3) ** 2 > (
+                    b3_ctr[i, 3] + r_b3) ** 2 + min_gap:
                 b3_avlb = b3_avlb * 1
             else:
                 b3_avlb = b3_avlb * 0
@@ -204,6 +216,7 @@ def b3_ctrs():
         else:
             b3_cont = b3_cont
 
+
 # Location for aggregate type 4
 def b4_ctrs():
     b4_cont = 0  # aggregate counter
@@ -215,28 +228,33 @@ def b4_ctrs():
         y_b4 = random.uniform(-math.sqrt(x_ ** 2 - x_b4 ** 2), math.sqrt(x_ ** 2 - x_b4 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b4 - 2 * min_gap
         z_b4 = random.uniform(-z_ / 2, z_ / 2)
-        for i in range(0, int(f_num * (n * p + 1)),1):
-            if (sph_ctr[i, 0] - x_b4) ** 2 + (sph_ctr[i, 1] - y_b4) ** 2 + (sph_ctr[i, 2] - z_b4) ** 2 > (r_sph + r_b4) ** 2 + min_gap:
+        for i in range(0, int(f_num * (n * p + 1)), 1):
+            if (sph_ctr[i, 0] - x_b4) ** 2 + (sph_ctr[i, 1] - y_b4) ** 2 + (sph_ctr[i, 2] - z_b4) ** 2 > (
+                    r_sph + r_b4) ** 2 + min_gap:
                 b4_avlb = b4_avlb * 1
             else:
                 b4_avlb = b4_avlb * 0
         for i in range(0, b1_num):
-            if (b1_ctr[i, 0] - x_b4) ** 2 + (b1_ctr[i, 1] - y_b4) ** 2 + (b1_ctr[i, 2] - z_b4) ** 2 > (b1_ctr[i, 3] + r_b4) ** 2 + min_gap:
+            if (b1_ctr[i, 0] - x_b4) ** 2 + (b1_ctr[i, 1] - y_b4) ** 2 + (b1_ctr[i, 2] - z_b4) ** 2 > (
+                    b1_ctr[i, 3] + r_b4) ** 2 + min_gap:
                 b4_avlb = b4_avlb * 1
             else:
                 b4_avlb = b4_avlb * 0
-        for i in range(0, b2_num,1):
-            if (b2_ctr[i, 0] - x_b4) ** 2 + (b2_ctr[i, 1] - y_b4) ** 2 + (b2_ctr[i, 2] - z_b4) ** 2 > (b2_ctr[i, 3] + r_b4) ** 2 + min_gap:
+        for i in range(0, b2_num, 1):
+            if (b2_ctr[i, 0] - x_b4) ** 2 + (b2_ctr[i, 1] - y_b4) ** 2 + (b2_ctr[i, 2] - z_b4) ** 2 > (
+                    b2_ctr[i, 3] + r_b4) ** 2 + min_gap:
                 b4_avlb = b4_avlb * 1
             else:
                 b4_avlb = b4_avlb * 0
-        for i in range(0, b3_num,1):
-            if (b3_ctr[i, 0] - x_b4) ** 2 + (b3_ctr[i, 1] - y_b4) ** 2 + (b3_ctr[i, 2] - z_b4) ** 2 > (b3_ctr[i, 3] + r_b4) ** 2 + min_gap:
+        for i in range(0, b3_num, 1):
+            if (b3_ctr[i, 0] - x_b4) ** 2 + (b3_ctr[i, 1] - y_b4) ** 2 + (b3_ctr[i, 2] - z_b4) ** 2 > (
+                    b3_ctr[i, 3] + r_b4) ** 2 + min_gap:
                 b4_avlb = b4_avlb * 1
             else:
                 b4_avlb = b4_avlb * 0
-        for i in range(0, b4_cont,1):
-            if (b4_ctr[i, 0] - x_b4) ** 2 + (b4_ctr[i, 1] - y_b4) ** 2 + (b4_ctr[i, 2] - z_b4) ** 2 > (b4_ctr[i, 3] + r_b4) ** 2 + min_gap:
+        for i in range(0, b4_cont, 1):
+            if (b4_ctr[i, 0] - x_b4) ** 2 + (b4_ctr[i, 1] - y_b4) ** 2 + (b4_ctr[i, 2] - z_b4) ** 2 > (
+                    b4_ctr[i, 3] + r_b4) ** 2 + min_gap:
                 b4_avlb = b4_avlb * 1
             else:
                 b4_avlb = b4_avlb * 0
@@ -258,38 +276,41 @@ b3_ctrs()
 b4_ctrs()
 
 # Record fibre locations
-f1 = open('sph_ctrs.txt', 'w')
-for i in range(len(sph_ctr)):
-    f1.write('%11.5f' % sph_ctr[i][0] + ',' + '%11.5f' % sph_ctr[i][1] + ',' + '%11.5f' % sph_ctr[i][2] + '\n')
-f1.close()
-f2 = open('CS_trans.txt', 'w')
+f1 = open('CS_trans.txt', 'w')
 for i in range(len(local_cs)):
-    f2.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
+    f1.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
+f1.close()
+f2 = open('CS_rotat.txt', 'w')
+for i in range(len(local_cs)):
+    f2.write('%11.5f' % local_cs[i][3] + ',' + '%11.5f' % local_cs[i][4] + ',' + '%11.5f' % local_cs[i][5] + '\n')
 f2.close()
-f3 = open('CS_rotat.txt', 'w')
-for i in range(len(local_cs)):
-    f3.write('%11.5f' % local_cs[i][3] + ',' + '%11.5f' % local_cs[i][4] + ',' + '%11.5f' % local_cs[i][5] + '\n')
-f3.close()
 # Record b1 location
-f1 = open('b1_ctrs.txt','w')
+f3 = open('b_ctrs.txt', 'w')
+f3.write('!centers for aggregate 1 (x,y,z,radius)' + '\n')
 for i in range(0, len(b1_ctr), 1):
-   f1.write('%11.5f' % b1_ctr[i,0] +' '+'%11.5f' % b1_ctr[i,1]+' '+'%11.5f' % b1_ctr[i,2] +'%11.5f' % b1_ctr[i,3] +'\n')
-f1.close()
+    f3.write(
+        '%11.5f' % b1_ctr[i, 0] + ' ' + '%11.5f' % b1_ctr[i, 1] + ' ' + '%11.5f' % b1_ctr[i, 2] + '%11.5f' % b1_ctr[
+            i, 3] + '\n')
 # Record b2 location
-f1 = open('b2_ctrs.txt','w')
+f3.write('!centers for aggregate 2 (x,y,z,radius)' + '\n')
 for i in range(0, len(b2_ctr), 1):
-   f1.write('%11.5f' % b2_ctr[i,0] +' '+'%11.5f' % b2_ctr[i,1]+' '+'%11.5f' % b2_ctr[i,2] +'%11.5f' % b2_ctr[i,3] +'\n')
-f1.close()
+    f3.write(
+        '%11.5f' % b2_ctr[i, 0] + ' ' + '%11.5f' % b2_ctr[i, 1] + ' ' + '%11.5f' % b2_ctr[i, 2] + '%11.5f' % b2_ctr[
+            i, 3] + '\n')
 # Record b3 location
-f1 = open('b3_ctrs.txt','w')
+f3.write('!centers for aggregate 3 (x,y,z,radius)' + '\n')
 for i in range(0, len(b3_ctr), 1):
-   f1.write('%11.5f' % b3_ctr[i,0] +' '+'%11.5f' % b3_ctr[i,1]+' '+'%11.5f' % b3_ctr[i,2] +'%11.5f' % b3_ctr[i,3] +'\n')
-f1.close()
+    f3.write(
+        '%11.5f' % b3_ctr[i, 0] + ' ' + '%11.5f' % b3_ctr[i, 1] + ' ' + '%11.5f' % b3_ctr[i, 2] + '%11.5f' % b3_ctr[
+            i, 3] + '\n')
 # Record b4 location
-f1 = open('b4_ctrs.txt','w')
+f3.write('!centers for aggregate 4 (x,y,z,radius)' + '\n')
 for i in range(0, len(b4_ctr), 1):
-   f1.write('%11.5f' % b4_ctr[i,0] +' '+'%11.5f' % b4_ctr[i,1]+' '+'%11.5f' % b4_ctr[i,2] +'%11.5f' % b4_ctr[i,3] +'\n')
-f1.close()
+    f3.write(
+        '%11.5f' % b4_ctr[i, 0] + ' ' + '%11.5f' % b4_ctr[i, 1] + ' ' + '%11.5f' % b4_ctr[i, 2] + '%11.5f' % b4_ctr[
+            i, 3] + '\n')
+f3.close()
+
 
 # plot spheres in matplotlib
 def plt_all():
@@ -301,7 +322,7 @@ def plt_all():
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    sphere_color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y' ,'k']
+    sphere_color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'b', 'g', 'r', 'c', 'm', 'y', 'k']
     for i in range(0, f_num, 1):
         for j in range(i * len(org_ctr), (i + 1) * len(org_ctr), 1):
             ax.scatter(sph_ctr[j][0], sph_ctr[j][1], sph_ctr[j][2], c=sphere_color[i])  # draw spheres (scatters)
@@ -312,7 +333,7 @@ def plt_all():
     for i in range(0, len(b3_ctr), 1):
         ax.scatter(b3_ctr[i][0], b3_ctr[i][1], b3_ctr[i][2], c='r')  # plot aggregate 3 (scatters)
     for i in range(0, len(b4_ctr), 1):
-        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 3 (scatters)
+        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 4 (scatters)
     plt.show()
 
 
