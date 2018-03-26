@@ -16,7 +16,7 @@ p = 1.75  # spiral fibre total pitch number (should equal to an integer plus int
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 margin = 0.2  # margin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r + margin) ** 2 + (
-        s * p / 2) ** 2) * 1.2  # radius of sphere which covers whole cylindar (mm), 1.2 for additional margin
+        s * p / 2) ** 2)  # radius of sphere which covers whole cylindar (mm)
 r_sph = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 n_sph = int(n * p + 1)  # number of spheres in one cylindar
 cld_ctr = np.zeros((f_num, 3))  # center of cylindars
