@@ -14,11 +14,7 @@ s = 8	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n equals to 2**?)
 p = 1.75	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
-<<<<<<< HEAD
 margin = r*0.1  !margin from fibre to outer cylindar (mm)
-=======
-margin = 0.2  !margin from fibre to outer cylindar (mm)
->>>>>>> 9abd396fd7f9d417486fa91a6b5cb1310c3267df
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)

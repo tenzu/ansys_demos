@@ -16,11 +16,7 @@ p = 1.75  # spiral fibre total pitch number (should equal to an integer plus int
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 margin = 0.2  # margin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r + margin) ** 2 + (
-<<<<<<< HEAD
         s * p / 2) ** 2) * 1.2  # radius of sphere which covers whole cylindar (mm), 1.2 for additional margin
-=======
-            s * p / 2) ** 2) * 1.2  # radius of sphere which covers whole cylindar (mm), 1.2 for additional margin
->>>>>>> 9abd396fd7f9d417486fa91a6b5cb1310c3267df
 r_sph = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 n_sph = int(n * p + 1)  # number of spheres in one cylindar
 cld_ctr = np.zeros((f_num, 3))  # center of cylindars
@@ -286,16 +282,19 @@ b3_ctrs()
 b4_ctrs()
 
 # Record fibre locations
-f1 = open('CS_trans.txt', 'w')
-for i in range(len(local_cs)):
-    f1.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
+f1 = open('sph_ctrs.txt', 'w')
+for i in range(len(sph_ctr)):
+    f1.write('%11.5f' % sph_ctr[i][0] + ',' + '%11.5f' % sph_ctr[i][1] + ',' + '%11.5f' % sph_ctr[i][2] + '\n')
 f1.close()
-f2 = open('CS_rotat.txt', 'w')
+f2 = open('CS_trans.txt', 'w')
 for i in range(len(local_cs)):
-    f2.write('%11.5f' % local_cs[i][3] + ',' + '%11.5f' % local_cs[i][4] + ',' + '%11.5f' % local_cs[i][5] + '\n')
+    f2.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
 f2.close()
+f3 = open('CS_rotat.txt', 'w')
+for i in range(len(local_cs)):
+    f3.write('%11.5f' % local_cs[i][3] + ',' + '%11.5f' % local_cs[i][4] + ',' + '%11.5f' % local_cs[i][5] + '\n')
+f3.close()
 # Record b1 location
-<<<<<<< HEAD
 f1 = open('b1_ctrs.txt', 'w')
 for i in range(0, len(b1_ctr), 1):
     f1.write(
@@ -323,34 +322,6 @@ for i in range(0, len(b4_ctr), 1):
         '%11.5f' % b4_ctr[i, 0] + ' ' + '%11.5f' % b4_ctr[i, 1] + ' ' + '%11.5f' % b4_ctr[i, 2] + '%11.5f' % b4_ctr[
             i, 3] + '\n')
 f1.close()
-=======
-f3 = open('b_ctrs.txt', 'w')
-f3.write('!centers for aggregate 1 (x,y,z,radius)' + '\n')
-for i in range(0, len(b1_ctr), 1):
-    f3.write(
-        '%11.5f' % b1_ctr[i, 0] + ' ' + '%11.5f' % b1_ctr[i, 1] + ' ' + '%11.5f' % b1_ctr[i, 2] + '%11.5f' % b1_ctr[
-            i, 3] + '\n')
-# Record b2 location
-f3.write('!centers for aggregate 2 (x,y,z,radius)' + '\n')
-for i in range(0, len(b2_ctr), 1):
-    f3.write(
-        '%11.5f' % b2_ctr[i, 0] + ' ' + '%11.5f' % b2_ctr[i, 1] + ' ' + '%11.5f' % b2_ctr[i, 2] + '%11.5f' % b2_ctr[
-            i, 3] + '\n')
-# Record b3 location
-f3.write('!centers for aggregate 3 (x,y,z,radius)' + '\n')
-for i in range(0, len(b3_ctr), 1):
-    f3.write(
-        '%11.5f' % b3_ctr[i, 0] + ' ' + '%11.5f' % b3_ctr[i, 1] + ' ' + '%11.5f' % b3_ctr[i, 2] + '%11.5f' % b3_ctr[
-            i, 3] + '\n')
-# Record b4 location
-f3.write('!centers for aggregate 4 (x,y,z,radius)' + '\n')
-for i in range(0, len(b4_ctr), 1):
-    f3.write(
-        '%11.5f' % b4_ctr[i, 0] + ' ' + '%11.5f' % b4_ctr[i, 1] + ' ' + '%11.5f' % b4_ctr[i, 2] + '%11.5f' % b4_ctr[
-            i, 3] + '\n')
-f3.close()
-
->>>>>>> 9abd396fd7f9d417486fa91a6b5cb1310c3267df
 
 
 # plot spheres in matplotlib
@@ -374,7 +345,7 @@ def plt_all():
     for i in range(0, len(b3_ctr), 1):
         ax.scatter(b3_ctr[i][0], b3_ctr[i][1], b3_ctr[i][2], c='r')  # plot aggregate 3 (scatters)
     for i in range(0, len(b4_ctr), 1):
-        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 4 (scatters)
+        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 3 (scatters)
     plt.show()
 
 
