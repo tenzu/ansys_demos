@@ -3,22 +3,22 @@ KEYW,PR_SET,1
 KEYW,PR_STRUC,1
 KEYW,LSDYNA,1
 KEYW,PR_DYNA,1
-!/CWD,'C:\Users\Tenzu\Desktop\tmp\3D_fibres'
+/CWD,'C:\Users\Tenzu\Desktop\tmp\3D_fibres'
 
 PI = acos(-1)
 r_disk = 37.5	!disk radius (mm)
 td_ratio = 0.4
 thickness = 2*r_disk*td_ratio	!disk thickness (mm)
 r = 1.5	!spiral fibre rotation radius (mm)
-s = 5	!spiral fibre pitch (mm)
+s = 8	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n equals to 2**?)
-p = 1.25	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+p = 1.75	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
-bargin = r*0.1  !bargin from fibre to outer cylindar (mm)
+margin = r*0.1  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)
-f_num = 12	!number of fibres
+f_num = 4	!number of fibres
 
 /PREP7
 ET,1,SOLID164
@@ -50,7 +50,7 @@ MP,NUXY,3,0.27
 	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
 
 	CSYS,11,
-	CYL4, , ,r+bargin,0,r,90,s*p   !draw hollow cylindar with bargins
+	CYL4, , ,r+margin,0,r,90,s*p   !draw hollow cylindar with margins
 	VATT,1,1,1,0
 	*GET,ii,LINE,0,NUM,MAX !ii for temporarily storing maximum line number
 	LESIZE,ii-6, , ,1, , , , ,0
@@ -65,12 +65,18 @@ MP,NUXY,3,0.27
 	*GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
 	CSYS,12
 	*DO,j,1,n*p+1,1 !draw nodes for single fibre
-	    NSEL,S,LOC,X,r
-	    theta1=360*(j-1)/n-360/n/3
-	    theta2=360*(j-1)/n+360/n/3
-	    NSEL,R,LOC,Y,theta1,theta2
-	    gama1=S/n*(j-1)-S/n/4
-	    gama2=S/n*(j-1)+S/n/4
+        r1=r-margin/2
+        r2=r+margin/2
+	    NSEL,S,LOC,X,r1,r2
+	    theta1=mod(360*(j-1)/n,360)-360/n/4
+	    theta2=mod(360*(j-1)/n,360)+360/n/4
+        *IF,theta1,lt,theta2,THEN
+	        NSEL,R,LOC,Y,theta1,theta2
+        *ELSE
+	        NSEL,R,LOC,Y,-(360-theta1),theta2
+        *ENDIF
+	    gama1=s/n*(j-1)-s/n/4
+	    gama2=s/n*(j-1)+s/n/4
 	    NSEL,R,LOC,Z,gama1,gama2
 	    *GET,ijk,NODE,0,NUM,MIN
 	    *SET,C_NODES((i-1)*(n*p+1)+j,1,1),ijk
