@@ -19,6 +19,10 @@ K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)
 f_num = 4	!number of fibres
+b1_num = 5  !number of aggregate type 1
+b2_num = 12  !number of aggregate type 2
+b3_num = 32  !number of aggregate type 3
+b4_num = 64  !number of aggregate type 4b1_num = 5
 
 /PREP7
 ET,1,SOLID164
@@ -42,6 +46,18 @@ MP,NUXY,3,0.27
 *DIM,CS_rotat,ARRAY,f_num,3,1, , ,   !read CS rotations
 *VREAD,CS_rotat,'CS_rotat','txt',,JIK,3,f_num,1, , 
 (3F12.5) 
+*DIM,b1_ctrs,ARRAY,b1_num,4,1, , ,   !read aggregate info
+*VREAD,b1_ctrs,'b1_ctrs','txt',,JIK,4,b1_num,1, , 
+(4F12.5) 
+*DIM,b2_ctrs,ARRAY,b2_num,4,1, , ,   !read aggregate info
+*VREAD,b2_ctrs,'b2_ctrs','txt',,JIK,4,b2_num,1, , 
+(4F12.5) 
+*DIM,b3_ctrs,ARRAY,b3_num,4,1, , ,   !read aggregate info
+*VREAD,b3_ctrs,'b3_ctrs','txt',,JIK,4,b3_num,1, , 
+(4F12.5) 
+*DIM,b4_ctrs,ARRAY,b4_num,4,1, , ,   !read aggregate info
+*VREAD,b4_ctrs,'b4_ctrs','txt',,JIK,4,b4_num,1, , 
+(4F12.5) 
 
 *DO,i,1,f_num,1	!draw hollow cylindars and fibres
 	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
@@ -132,21 +148,42 @@ CMSEL,S,F_NODES 	!fibre node set for 1D contact
 D,ALL, , , , , ,UY, , , , ,
 ALLSEL,ALL
 
-wpoff,0,0,-thickness/2  	!draw disk
-CYL4, , ,r_disk, , , ,thickness
-WPCSYS,-1,0
-VOVLAP,ALL
-MSHAPE,1,3D
-MSHKEY,0
-LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
-*GET,j_max,VOLU,0,NUM,MAX	!j_max for temporarily storing maximum volumn number
-VATT,3,1,1,0
-VMESH,j_max
+*DO,i,1,b1_num,1    !create aggregate 1
+    wpoff,b1_ctrs(i,1,1),b1_ctrs(i,2,1),b1_ctrs(i,3,1)  
+    SPH4, , ,b1_ctrs(i,4,1) 
+    WPCSYS,-1,0 
+*ENDDO
+*DO,i,1,b2_num,1    !create aggregate 1
+    wpoff,b2_ctrs(i,1,1),b2_ctrs(i,2,1),b2_ctrs(i,3,1)  
+    SPH4, , ,b2_ctrs(i,4,1) 
+    WPCSYS,-1,0 
+*ENDDO
+*DO,i,1,b3_num,1    !create aggregate 1
+    wpoff,b3_ctrs(i,1,1),b3_ctrs(i,2,1),b3_ctrs(i,3,1)  
+    SPH4, , ,b3_ctrs(i,4,1) 
+    WPCSYS,-1,0 
+*ENDDO
+*DO,i,1,b4_num,1    !create aggregate 1
+    wpoff,b4_ctrs(i,1,1),b4_ctrs(i,2,1),b4_ctrs(i,3,1)  
+    SPH4, , ,b4_ctrs(i,4,1) 
+    WPCSYS,-1,0 
+*ENDDO
 
-FINISH
-/SOL
-TIME,3,
-EDRST, ,0.1,
-EDHTIME, ,0,
-EDDUMP, ,0,
-EDWRITE,LSDYNA,'tmp','k',' '
+!wpoff,0,0,-thickness/2  	!draw disk
+!CYL4, , ,r_disk, , , ,thickness
+!WPCSYS,-1,0
+!VOVLAP,ALL
+!MSHAPE,1,3D
+!MSHKEY,0
+!LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
+!*GET,j_max,VOLU,0,NUM,MAX	!j_max for temporarily storing maximum volumn number
+!VATT,3,1,1,0
+!VMESH,j_max
+!
+!FINISH
+!/SOL
+!TIME,3,
+!EDRST, ,0.1,
+!EDHTIME, ,0,
+!EDDUMP, ,0,
+!EDWRITE,LSDYNA,'tmp','k',' '
