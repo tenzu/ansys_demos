@@ -10,9 +10,9 @@ f_num = 4  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 1.5  # spiral fibre rotation radius (mm)
-s = 8  # spiral fibre pitch (mm)
+s = 5  # spiral fibre pitch (mm)
 n = 16  # division in single pitch (n equals to 2**?)
-p = 1.75  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+p = 2.75  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 margin = 0.2  # margin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r + margin) ** 2 + (
@@ -78,19 +78,18 @@ def f_ctrs():
             [[math.cos(theta2), 0, math.sin(theta2)], [0, 1, 0], [-math.sin(theta2), 0, math.cos(theta2)]])
         T3_matrix = np.array(
             [[math.cos(theta3), -math.sin(theta3), 0], [math.sin(theta3), math.cos(theta3), 0], [0, 0, 1]])
-        before_rotation = np.array([0, 0, 0])
-        before_rotation_1 = np.array([0, 0, s * p])  # for overlap judgement of cylindar in disk thickness
-        before_rotation_2 = np.array([0, 0, s * p / 2])  # for overlap judegment of cylindar in cylindar axis direction
+        # row 1 for user CS
+        # row 2 for overlap judgement of cylindar in cylindar axis direction
+        # row 3 for overlap judgement of cylindar in disk thickness
+        before_rotation = np.array([[0, 0, 0], [0, 0, s * p / 2], [0, 0, s * p]])
         after_rotation = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation)))
-        after_rotation_1 = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation_1)))
-        after_rotation_2 = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation_2)))
-        cld_ctr[f_cont, 0] = after_rotation[0] + tmp_cs[0]
-        cld_ctr[f_cont, 1] = after_rotation[1] + tmp_cs[1]
-        cld_ctr[f_cont, 2] = after_rotation[2] + tmp_cs[2]
-        cld_ctr_1[f_cont, 2] = after_rotation_1[2] + tmp_cs[2]
-        cld_ctr_2[f_cont, 0] = after_rotation_2[0] + tmp_cs[0]
-        cld_ctr_2[f_cont, 1] = after_rotation_2[1] + tmp_cs[1]
-        cld_ctr_2[f_cont, 2] = after_rotation_2[2] + tmp_cs[2]
+        cld_ctr[f_cont, 0] = after_rotation[0][0] + tmp_cs[0]
+        cld_ctr[f_cont, 1] = after_rotation[0][1] + tmp_cs[1]
+        cld_ctr[f_cont, 2] = after_rotation[0][2] + tmp_cs[2]
+        cld_ctr_1[f_cont, 2] = after_rotation[2][2] + tmp_cs[2]
+        cld_ctr_2[f_cont, 0] = after_rotation[1][0] + tmp_cs[0]
+        cld_ctr_2[f_cont, 1] = after_rotation[1][1] + tmp_cs[1]
+        cld_ctr_2[f_cont, 2] = after_rotation[1][2] + tmp_cs[2]
         for i in range(0, f_cont, 1):
             if (cld_ctr[i, 0] - cld_ctr[f_cont, 0]) ** 2 + (cld_ctr[i, 1] - cld_ctr[f_cont, 1]) ** 2 + (
                     cld_ctr[i, 2] - cld_ctr[f_cont, 2]) ** 2 > (r_cylindar + r_cylindar) ** 2 + min_gap and abs(
@@ -103,11 +102,12 @@ def f_ctrs():
         if f_avlb == 1:
             local_cs.append(tmp_cs)
             for j in range(0, n_sph, 1):
-                before_rotation_2 = np.array([org_ctr[j, 0], org_ctr[j, 1], org_ctr[j, 2]])
-                after_rotation_2 = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation_2)))
-                sph_ctr[j + f_cont * n_sph, 0] = after_rotation_2[0] + tmp_cs[0]
-                sph_ctr[j + f_cont * n_sph, 1] = after_rotation_2[1] + tmp_cs[1]
-                sph_ctr[j + f_cont * n_sph, 2] = after_rotation_2[2] + tmp_cs[2]
+                sph_ctr_before_rotation = np.array([org_ctr[j, 0], org_ctr[j, 1], org_ctr[j, 2]])
+                sph_ctr_after_rotation = np.dot(T1_matrix,
+                                                np.dot(T2_matrix, np.dot(T3_matrix, sph_ctr_before_rotation)))
+                sph_ctr[j + f_cont * n_sph, 0] = sph_ctr_after_rotation[0] + tmp_cs[0]
+                sph_ctr[j + f_cont * n_sph, 1] = sph_ctr_after_rotation[1] + tmp_cs[1]
+                sph_ctr[j + f_cont * n_sph, 2] = sph_ctr_after_rotation[2] + tmp_cs[2]
             f_cont += 1
         else:
             f_cont = f_cont
@@ -124,12 +124,6 @@ def b1_ctrs():
         y_b1 = random.uniform(-math.sqrt(x_ ** 2 - x_b1 ** 2), math.sqrt(x_ ** 2 - x_b1 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b1 - 2 * min_gap
         z_b1 = random.uniform(-z_ / 2, z_ / 2)
-        # for i in range(0, int(f_num * (n * p + 1)), 1):
-        #    if (sph_ctr[i, 0] - x_b1) ** 2 + (sph_ctr[i, 1] - y_b1) ** 2 + (sph_ctr[i, 2] - z_b1) ** 2 > (
-        #            r_sph + r_b1) ** 2 + min_gap:
-        #        b1_avlb = b1_avlb * 1
-        #    else:
-        #        b1_avlb = b1_avlb * 0
         for i in range(0, len(cld_ctr_2), 1):
             if (cld_ctr_2[i, 0] - x_b1) ** 2 + (cld_ctr_2[i, 1] - y_b1) ** 2 + (cld_ctr_2[i, 2] - z_b1) ** 2 > (
                     r_cylindar + r_b1) ** 2 + min_gap:
@@ -163,12 +157,6 @@ def b2_ctrs():
         y_b2 = random.uniform(-math.sqrt(x_ ** 2 - x_b2 ** 2), math.sqrt(x_ ** 2 - x_b2 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b2 - 2 * min_gap
         z_b2 = random.uniform(-z_ / 2, z_ / 2)
-        # for i in range(0, int(f_num * (n * p + 1)), 1):
-        #    if (sph_ctr[i, 0] - x_b2) ** 2 + (sph_ctr[i, 1] - y_b2) ** 2 + (sph_ctr[i, 2] - z_b2) ** 2 > (
-        #            r_sph + r_b2) ** 2 + min_gap:
-        #        b2_avlb = b2_avlb * 1
-        #    else:
-        #        b2_avlb = b2_avlb * 0
         for i in range(0, len(cld_ctr_2), 1):
             if (cld_ctr_2[i, 0] - x_b2) ** 2 + (cld_ctr_2[i, 1] - y_b2) ** 2 + (cld_ctr_2[i, 2] - z_b2) ** 2 > (
                     r_cylindar + r_b2) ** 2 + min_gap:
@@ -208,12 +196,6 @@ def b3_ctrs():
         y_b3 = random.uniform(-math.sqrt(x_ ** 2 - x_b3 ** 2), math.sqrt(x_ ** 2 - x_b3 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b3 - 2 * min_gap
         z_b3 = random.uniform(-z_ / 2, z_ / 2)
-        # for i in range(0, int(f_num * (n * p + 1)), 1):
-        #    if (sph_ctr[i, 0] - x_b3) ** 2 + (sph_ctr[i, 1] - y_b3) ** 2 + (sph_ctr[i, 2] - z_b3) ** 2 > (
-        #            r_sph + r_b3) ** 2 + min_gap:
-        #        b3_avlb = b3_avlb * 1
-        #    else:
-        #        b3_avlb = b3_avlb * 0
         for i in range(0, len(cld_ctr_2), 1):
             if (cld_ctr_2[i, 0] - x_b3) ** 2 + (cld_ctr_2[i, 1] - y_b3) ** 2 + (cld_ctr_2[i, 2] - z_b3) ** 2 > (
                     r_cylindar + r_b3) ** 2 + min_gap:
@@ -259,12 +241,6 @@ def b4_ctrs():
         y_b4 = random.uniform(-math.sqrt(x_ ** 2 - x_b4 ** 2), math.sqrt(x_ ** 2 - x_b4 ** 2))
         z_ = 2 * r_disk * td_ratio - 2 * r_b4 - 2 * min_gap
         z_b4 = random.uniform(-z_ / 2, z_ / 2)
-        # for i in range(0, int(f_num * (n * p + 1)), 1):
-        #    if (sph_ctr[i, 0] - x_b4) ** 2 + (sph_ctr[i, 1] - y_b4) ** 2 + (sph_ctr[i, 2] - z_b4) ** 2 > (
-        #            r_sph + r_b4) ** 2 + min_gap:
-        #        b4_avlb = b4_avlb * 1
-        #    else:
-        #        b4_avlb = b4_avlb * 0
         for i in range(0, len(cld_ctr_2), 1):
             if (cld_ctr_2[i, 0] - x_b4) ** 2 + (cld_ctr_2[i, 1] - y_b4) ** 2 + (cld_ctr_2[i, 2] - z_b4) ** 2 > (
                     r_cylindar + r_b4) ** 2 + min_gap:
@@ -313,10 +289,10 @@ b3_ctrs()
 b4_ctrs()
 
 # Record fibre locations
-# f1 = open('sph_ctrs.txt', 'w')
-# for i in range(len(sph_ctr)):
-#     f1.write('%11.5f' % sph_ctr[i][0] + ',' + '%11.5f' % sph_ctr[i][1] + ',' + '%11.5f' % sph_ctr[i][2] + '\n')
-# f1.close()
+f1 = open('sph_ctrs.txt', 'w')
+for i in range(len(sph_ctr)):
+    f1.write('%11.5f' % sph_ctr[i][0] + ',' + '%11.5f' % sph_ctr[i][1] + ',' + '%11.5f' % sph_ctr[i][2] + '\n')
+f1.close()
 f1 = open('CS_trans.txt', 'w')
 for i in range(len(local_cs)):
     f1.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
@@ -376,7 +352,7 @@ def plt_all():
     for i in range(0, len(b3_ctr), 1):
         ax.scatter(b3_ctr[i][0], b3_ctr[i][1], b3_ctr[i][2], c='r')  # plot aggregate 3 (scatters)
     for i in range(0, len(b4_ctr), 1):
-        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 3 (scatters)
+        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 4 (scatters)
     plt.show()
 
 
