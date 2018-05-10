@@ -48,6 +48,10 @@ $# rotascl    intgrd    lamsht    cstyp6    tshell
   1.000000         0         0         1         0         0         0         0
 $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
+*CONTROL_TIMESTEP
+    0.0000    0.9000         0  0.00      0.00    
+*CONTROL_TERMINATION
+  3.00             0   0.00000   0.00000   0.00000
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
@@ -57,6 +61,12 @@ $# nintsld   pkp_sen      sclp     hydro     msscl     therm    intout    nodout
          0         0  1.000000         0         0         0STRESS    STRESS
 $#    dtdt    resplt
          0         0
+*DATABASE_BINARY_D3PLOT
+0.1000    
+*DATABASE_BINARY_D3THDT
+0.3000E-02
+*DATABASE_BINARY_D3DUMP
+         0
 *CONTACT_1D
 $#   nsids     nsidm       err      sigc        gb      smax       exp
          3         4      &err     &sigc       &gb     &smax      &exp 
