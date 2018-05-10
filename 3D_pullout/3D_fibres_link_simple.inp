@@ -193,6 +193,11 @@ CMSEL,A,PULL
 EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
 ALLSEL,ALL  
 
+ESEL,S,MAT,,1   !merge concrete nodes
+NSLE,R  
+NUMMRG,NODE, , , ,LOW   
+ALLSEL,ALL  
+
 ASEL,S,LOC,Z,0  !fix end
 NSLA,R,1
 D,ALL, , , , , ,ALL, , , , ,   
