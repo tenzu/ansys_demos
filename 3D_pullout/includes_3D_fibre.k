@@ -48,14 +48,6 @@ $# rotascl    intgrd    lamsht    cstyp6    tshell
   1.000000         0         0         1         0         0         0         0
 $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
-*CONTROL_TERMINATION
-$#  endtim    endcyc     dtmin    endeng    endmas
-  3.000000         0     0.000     0.000     0.000
-*CONTROL_TIMESTEP
-$#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
-     0.000  0.900000         0     0.000     0.000         0         0         0
-$#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
-     0.000         0         0                         0.000
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
@@ -67,14 +59,14 @@ $#    dtdt    resplt
          0         0
 *CONTACT_1D
 $#   nsids     nsidm       err      sigc        gb      smax       exp
-         1         2      &err     &sigc       &gb     &smax      &exp 
+         3         4      &err     &sigc       &gb     &smax      &exp 
 *MAT_CONCRETE_DAMAGE_REL3
 $#     mid        ro        pr
          1 2.7500E-3  0.200000
 $#      ft        a0        a1        a2        b1     omega       a1f
   5.000000-140.00000     0.000     0.000     0.000     0.000     0.000
 $# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
-     0.000     0.000     0.000  0.393700 145.00000      1111     0.000     0.000
+     0.000     0.000     0.000 0.0393700 145.00000      1111     0.000     0.000
 $# lambda1   lambda2   lambda3   lambda4   lambda5   lambda6   lambda7   lambda8
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 $#lambda09  lambda10  lambda11  lambda12  lambda13        b3       a0y       a1y

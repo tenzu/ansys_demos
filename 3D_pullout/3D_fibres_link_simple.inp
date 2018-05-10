@@ -11,15 +11,18 @@ td_ratio = 0.4
 thickness = 2*r_disk*td_ratio	!disk thickness (mm)
 r = 1.5	!spiral fibre rotation radius (mm)
 s = 8	!spiral fibre pitch (mm)
-n = 16	!division in single pitch (n equals to 2**?)
+n = 32	!division in single pitch (n equals to 2**?)
 p = 1.75	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
-margin = r*0.1  !margin from fibre to outer cylindar (mm)
+margin = 2*PI*r/n  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)
 f_num = 1	!number of fibres
 
+/VIEW,1,1,1,1   
+/ANG,1  
+/REP,FAST   
 
 /PREP7
 ET,1,SOLID164
@@ -31,9 +34,6 @@ MP,NUXY,1,0.2
 MP,DENS,2,0.0078
 MP,EX,2,2e5
 MP,NUXY,2,0.28
-MP,DENS,3,0.0078
-MP,EX,3,2e5
-MP,NUXY,3,0.27
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
 
@@ -52,7 +52,7 @@ MP,NUXY,3,0.27
 	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
 
 	CSYS,11,
-	CYL4, , ,r+margin,0,r,90,s*p   !draw hollow cylindar with margins
+	CYL4, , ,r,0,r+margin,90,s*p   !draw hollow cylindar with margins
 	VATT,1,1,1,0
 	*GET,ii,LINE,0,NUM,MAX !ii for temporarily storing maximum line number
 	LESIZE,ii-6, , ,1, , , , ,0
@@ -135,17 +135,69 @@ CMSEL,S,F_NODES 	!fibre node set for 1D contact
 D,ALL, , , , , ,UY, , , , ,
 ALLSEL,ALL
 
+CYL4, , , ,0,r,90,s*p   !inside cylindar
+*GET,i_max,VOLU,0,NUM,MAX	!i_max for temporarily storing maximum volumn number
+VSEL,S, , , i_max
+ASLV,R  
+LSLA,R  
+LSEL,R,LOC,Z,0  
+LESIZE,ALL, , ,n/4, ,1, , ,1,   
+ALLSEL,ALL
+LSEL,S,LOC,X,0  
+LSEL,R,LOC,Y,0  
+LESIZE,ALL, , ,n*p, , , , ,0
+VSEL,S, , , i_max
+VATT,1,1,1,0
+VSWEEP,i_max
+VSYMM,X,i_max, , , ,0,0
+VSYMM,Y,i_max, , , ,0,0
+VSYMM,Y,i_max+1, , , ,0,0
+ALLSEL,ALL
 
-!wpoff,0,0,-thickness/2  	!draw disk
-!CYL4, , ,r_disk, , , ,thickness
-!WPCSYS,-1,0
-VOVLAP,ALL
-MSHAPE,1,3D
-MSHKEY,0
-LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
-*GET,j_max,VOLU,0,NUM,MAX	!j_max for temporarily storing maximum volumn number
-VATT,3,1,1,0
-VMESH,j_max
+CYL4, , ,r+margin,0,3*r,90,s*p   !outside cylindar
+*GET,i_max,VOLU,0,NUM,MAX	!i_max for temporarily storing maximum volumn number
+VSEL,S, , , i_max
+ASLV,R  
+LSLA,R  
+LSEL,R,LOC,Z,0  
+LESIZE,ALL, , ,n/4, ,1, , ,1,   
+ALLSEL,ALL
+VSEL,S, , , i_max
+LSEL,S,LOC,X,0  
+LSEL,R,LOC,Y,r+margin  
+LESIZE,ALL, , ,n*p, , , , ,0
+VSEL,S, , , i_max
+VATT,1,1,1,0
+VSWEEP,i_max
+VSYMM,X,i_max, , , ,0,0
+VSYMM,Y,i_max, , , ,0,0
+VSYMM,Y,i_max+1, , , ,0,0
+ALLSEL,ALL
+
+ESEL,S,MAT,,2   !node and beam element for loading
+NSLE,R  
+*GET,i_max,NODE,0,NUM,MAX	!i_max for temporarily storing maximum node number
+NWPAVE,i_max
+CSYS,4  
+N, ,,,5,,,,
+CSYS,0
+*GET,j_max,NODE,0,NUM,MAX	!i_max for temporarily storing maximum node number
+E,i_max,j_max
+NSEL,S, , ,   34486 
+CM,PULL,NODE
+CMSEL,A,PULL
+*DIM,TIME,ARRAY,2,1,1, , ,  
+*SET,TIME(2,1,1) , 10   
+*DIM,DISP,ARRAY,2,1,1, , ,  
+*SET,DISP(2,1,1) , 10   
+EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
+ALLSEL,ALL  
+
+ASEL,S,LOC,Z,0  !fix end
+NSLA,R,1
+D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL  
+
 
 FINISH
 /SOL
