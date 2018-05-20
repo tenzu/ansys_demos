@@ -1,0 +1,177 @@
+/NOPR
+KEYW,PR_SET,1
+KEYW,PR_STRUC,1
+KEYW,LSDYNA,1
+KEYW,PR_DYNA,1
+/CWD,'C:\Users\Cliff\Desktop\tmp\no_aggregate'
+
+PI = acos(-1)
+r_disk = 37.5	!disk radius (mm)
+td_ratio = 0.4
+thickness = 2*r_disk*td_ratio	!disk thickness (mm)
+alpha = 10  !alpha for FBD
+r = 1.5	!spiral fibre rotation radius (mm)
+s = 8	!spiral fibre pitch (mm)
+n = 16	!division in single pitch (n equals to 2**?)
+p = 1.75	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+theta = p*360	!spiral fibre total rotation angle (DEG)
+margin = r*0.1  !margin from fibre to outer cylindar (mm)
+K_num = p*n+1	!total node number in one spiral fibre
+L_num = K_num-1 !total element number in one spiral fibre
+r_beam = 0.56   !radius of fibre section (mm)
+f_num = 4	!number of fibres
+
+/PREP7
+ET,1,SOLID164
+ET,2,LINK160
+R,1,r_beam,  !section area for fibre
+MP,DENS,1,0.0024    !material properties
+MP,EX,1,2e4
+MP,NUXY,1,0.2
+MP,DENS,2,0.0078
+MP,EX,2,2e5
+MP,NUXY,2,0.28
+MP,DENS,3,0.0078
+MP,EX,3,2e5
+MP,NUXY,3,0.27
+*DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
+*DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
+
+*DIM,CS_trans,ARRAY,f_num,3,1, , ,   !read CS transmissions
+*VREAD,CS_trans,'CS_trans','txt',,JIK,3,f_num,1, , 
+(3F12.5) 
+*DIM,CS_rotat,ARRAY,f_num,3,1, , ,   !read CS rotations
+*VREAD,CS_rotat,'CS_rotat','txt',,JIK,3,f_num,1, , 
+(3F12.5) 
+
+*DO,i,1,f_num,1	!draw hollow cylindars and fibres
+	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
+	wpro,CS_rotat(i,1,1),CS_rotat(i,2,1),CS_rotat(i,3,1)
+	CSWPLA,11,0,1,1,	!temporary Cartesian coordinate system
+	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
+
+	CSYS,11,
+	CYL4, , ,r+margin,0,r,90,s*p   !draw hollow cylindar with margins
+	VATT,1,1,1,0
+	*GET,ii,LINE,0,NUM,MAX !ii for temporarily storing maximum line number
+	LESIZE,ii-6, , ,1, , , , ,0
+	LESIZE,ii-5, , ,n/4, , , , ,0
+	LESIZE,ii-3, , ,n*p, , , , ,0
+	*GET,ii,VOLU,0,NUM,MAX !ii for temporarily storing maximum volumn number
+	VSWEEP,ii
+	VSYMM,X,ii, , , ,0,0
+	VSYMM,Y,ii, , , ,0,0
+	VSYMM,Y,ii+1, , , ,0,0
+
+	*GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
+	CSYS,12
+	*DO,j,1,n*p+1,1 !draw nodes for single fibre
+        r1=r-margin/2
+        r2=r+margin/2
+	    NSEL,S,LOC,X,r1,r2
+	    theta1=mod(360*(j-1)/n,360)-360/n/4
+	    theta2=mod(360*(j-1)/n,360)+360/n/4
+        *IF,theta1,lt,theta2,THEN
+	        NSEL,R,LOC,Y,theta1,theta2
+        *ELSE
+	        NSEL,R,LOC,Y,-(360-theta1),theta2
+        *ENDIF
+	    gama1=s/n*(j-1)-s/n/4
+	    gama2=s/n*(j-1)+s/n/4
+	    NSEL,R,LOC,Z,gama1,gama2
+	    *GET,ijk,NODE,0,NUM,MIN
+	    *SET,C_NODES((i-1)*(n*p+1)+j,1,1),ijk
+	    *GET,iii,NODE,ijk,LOC,X
+	    *GET,jjj,NODE,ijk,LOC,Y
+	    *GET,kkk,NODE,ijk,LOC,Z
+	    N,,iii,jjj,kkk
+		*GET,i_max,NODE,0,NUM,MAX	!i_max for temporarily storing maximum node number
+		*SET,F_NODES((i-1)*(n*p+1)+j,1,1),i_max
+	    ALLSEL,ALL
+	*ENDDO
+
+	CSYS,11
+	TYPE,2
+	MAT,2
+	REAL,1
+	ESYS,0
+	SECNUM,
+	*DO,j,1,n*p,1   !draw beam elements for single fibre
+	    E,ii+j,ii+j+1
+	*ENDDO
+	WPCSYS,-1,0
+*ENDDO
+
+*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
+    *SET,j,C_NODES(i,1,1)
+    *IF,i,eq,1,then
+        NSEL,S,,,j
+    *ELSE
+        NSEL,A,,,j
+    *ENDIF
+*ENDDO
+CM,C_NODES,NODE
+CMSEL,A,C_NODES
+ALLSEL,ALL
+
+*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
+    *SET,j,F_NODES(i,1,1)
+    *IF,i,eq,1,then
+        NSEL,S,,,j
+    *ELSE
+        NSEL,A,,,j
+    *ENDIF
+*ENDDO
+CM,F_NODES,NODE
+CMSEL,A,F_NODES
+ALLSEL,ALL
+
+CMSEL,S,C_NODES 	!concrete node set for 1D contact
+D,ALL, , , , , ,UX, , , , ,
+ALLSEL,ALL
+CMSEL,S,F_NODES 	!fibre node set for 1D contact
+D,ALL, , , , , ,UY, , , , ,
+ALLSEL,ALL
+
+wpoff,0,0,-thickness/2    !draw disk
+CYL4, , , , ,r_disk,90
+CSWPLA,11,1,1,1,
+K, ,r_disk,alpha,,  
+CSYS,0  
+*GET,k_max,KP,0,NUM,MAX !get maximum keypoint number
+KWPAVE,k_max
+*GET,i_x,KP,k_max,LOC,X    !get keypoint x_location
+*GET,i_z,KP,k_max,LOC,Z    !get keypoint z_location
+K, ,i_x,0,i_z,
+WPCSYS,-1
+wpoff,0,0,-thickness/2
+LSTR,k_max,k_max+1
+*GET,l_max,LINE,0,NUM,MAX   !get maximum line number
+*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
+ASBL,a_max,l_max
+ADELE,a_max+1, , ,1
+NUMCMP,AREA
+ARSYM,X,a_max, , , ,0,0
+ARSYM,Y,a_max, , , ,0,0
+ARSYM,Y,a_max+1, , , ,0,0
+ASEL,S,LOC,Z,i_z
+AADD,ALL
+ALLSEL,ALL  
+NUMCMP,AREA 
+*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
+VOFFST,a_max,thickness, ,
+VOVLAP,ALL
+MSHAPE,1,3D
+MSHKEY,0
+LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
+*GET,v_max,VOLU,0,NUM,MAX	!v_max for temporarily storing maximum volumn number
+VATT,3,1,1,0
+VMESH,4*f_num,v_max,1
+
+FINISH
+/SOL
+TIME,3,
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0,
+EDWRITE,LSDYNA,'tmp','k',' '
