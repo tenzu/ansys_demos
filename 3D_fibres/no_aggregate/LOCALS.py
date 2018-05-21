@@ -9,10 +9,10 @@ min_gap = 0.1  # minimum gap between blocks (mm)
 f_num = 4  # number of fibres
 
 # original segment center for cylindars (fibres)
-r = 1.5  # spiral fibre rotation radius (mm)
-s = 5  # spiral fibre pitch (mm)
+r = 2  # spiral fibre rotation radius (mm)
+s = 8  # spiral fibre pitch (mm)
 n = 16  # division in single pitch (n equals to 2**?)
-p = 2.75  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+p = 1.25  # spiral fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p * 360  # spiral fibre total rotation angle (DEG)
 margin = 0.2  # margin from fibre to outer cylindar (mm)
 r_cylindar = math.sqrt((r + margin) ** 2 + (

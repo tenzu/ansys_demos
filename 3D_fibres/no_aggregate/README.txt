@@ -1,7 +1,8 @@
-﻿1. 删除*LOAD_NODE_SET 1,2
+﻿1. 删除*BOUNDARY_SPC_SET
 2. 删除*SECTION_BEAM
 3. 删除*MAT
 4. 删除*CONTROL_
+5. 删除*DATABASE_EXTENT_BINARY
 
 *INCLUDE
 includes_3D_fibre.k
