@@ -301,10 +301,10 @@ f_ctrs()
 # b4_ctrs()
 
 # Record fibre locations
-f1 = open('cph_ctr.txt', 'w')
-for i in range(len(sph_ctr)):
-    f1.write('%11.5f' % sph_ctr[i, 0] + ',' + '%11.5f' % sph_ctr[i, 1] + ',' + '%11.5f' % sph_ctr[i, 2] + '\n')
-f1.close()
+# f1 = open('sph_ctr.txt', 'w')
+# for i in range(len(sph_ctr)):
+#     f1.write('%11.5f' % sph_ctr[i, 0] + ',' + '%11.5f' % sph_ctr[i, 1] + ',' + '%11.5f' % sph_ctr[i, 2] + '\n')
+# f1.close()
 f1 = open('CS_trans.txt', 'w')
 for i in range(len(local_cs)):
     f1.write('%11.5f' % local_cs[i][0] + ',' + '%11.5f' % local_cs[i][1] + ',' + '%11.5f' % local_cs[i][2] + '\n')
