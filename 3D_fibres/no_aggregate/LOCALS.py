@@ -7,7 +7,7 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 alpha = 10 * math.pi / 180  # degree to radian
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 4  # number of fibres
+f_num = 12  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 2  # spiral fibre rotation radius (mm)
@@ -90,16 +90,16 @@ def f_ctrs():
             cld_ctr[f_cont * cld_ctr_num + i, 2] = after_rotation[i, 2] + tmp_cs[2]
         if f_cont == 0: # in the first fibre, only check every sphere is within disk
             for i in range(0, cld_ctr_num, 1):
-                if abs(cld_ctr[i, 0]) < r_disk * (1 - math.cos(alpha)) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
-                        (r_disk * (1 - math.cos(alpha))) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
+                if abs(cld_ctr[i, 0]) < r_disk * math.cos(alpha) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
+                        (r_disk * math.cos(alpha)) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
                     cld_ctr[i, 2]) < 2 * r_disk * td_ratio / 2 - min_gap:
                     f_avlb = f_avlb * 1
                 else:
                     f_avlb = f_avlb * 0
         else:   # in other fibres, check every sphere is within disk, and new spheres not overlapping with old spheres
             for i in range(f_cont*cld_ctr_num+1, (f_cont+1)*cld_ctr_num, 1):
-                if abs(cld_ctr[i, 0]) < r_disk * (1 - math.cos(alpha)) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
-                        (r_disk * (1 - math.cos(alpha))) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
+                if abs(cld_ctr[i, 0]) < r_disk * math.cos(alpha) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
+                        (r_disk * math.cos(alpha)) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
                     cld_ctr[i, 2]) < 2 * r_disk * td_ratio / 2 - min_gap:
                     f_avlb = f_avlb * 1
                 else:
