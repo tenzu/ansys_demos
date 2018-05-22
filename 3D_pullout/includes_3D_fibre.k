@@ -51,7 +51,7 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
 *CONTROL_TIMESTEP
     0.0000    0.9000         0  0.00      0.00    
 *CONTROL_TERMINATION
-  3.00             0   0.00000   0.00000   0.00000
+  5.00             0   0.00000   0.00000   0.00000
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
