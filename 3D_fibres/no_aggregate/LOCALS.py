@@ -5,6 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
+alpha = 10 * math.pi / 180  # degree to radian
 min_gap = 0.1  # minimum gap between blocks (mm)
 f_num = 4  # number of fibres
 
@@ -19,9 +20,8 @@ r_cylindar = math.sqrt((r + margin) ** 2 + (
         s * p / 2) ** 2)  # radius of sphere which covers whole cylindar (mm)
 r_sph = 2 * r ** 2 * (1 - math.cos(math.pi / n))  # radius of spheres in cylindar (mm)
 n_sph = int(n * p + 1)  # number of spheres in one cylindar
-cld_ctr = np.zeros((f_num, 3))  # center of cylindars
-cld_ctr_1 = np.zeros((f_num, 3))  # center of cylindars
-cld_ctr_2 = np.zeros((f_num, 3))  # center of cylindars
+cld_ctr_num = 5  # number of spheres in one cylindar
+cld_ctr = np.zeros((f_num * cld_ctr_num, 3))  # centers of cylindars
 sph_ctr = np.zeros((f_num * n_sph, 3))  # centers of spheres
 rd = np.linspace(0, 2 * math.pi, n + 1)  # angles of sphere centers
 local_cs = []  # local cordinate systems for fibres
@@ -78,27 +78,39 @@ def f_ctrs():
             [[math.cos(theta2), 0, math.sin(theta2)], [0, 1, 0], [-math.sin(theta2), 0, math.cos(theta2)]])
         T3_matrix = np.array(
             [[math.cos(theta3), -math.sin(theta3), 0], [math.sin(theta3), math.cos(theta3), 0], [0, 0, 1]])
-        # row 1 for user CS
-        # row 2 for overlap judgement of cylindar in cylindar axis direction
-        # row 3 for overlap judgement of cylindar in disk thickness
-        before_rotation = np.array([[0, 0, 0], [0, 0, s * p / 2], [0, 0, s * p]])
-        after_rotation = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation)))
-        cld_ctr[f_cont, 0] = after_rotation[0][0] + tmp_cs[0]
-        cld_ctr[f_cont, 1] = after_rotation[0][1] + tmp_cs[1]
-        cld_ctr[f_cont, 2] = after_rotation[0][2] + tmp_cs[2]
-        cld_ctr_1[f_cont, 2] = after_rotation[2][2] + tmp_cs[2]
-        cld_ctr_2[f_cont, 0] = after_rotation[1][0] + tmp_cs[0]
-        cld_ctr_2[f_cont, 1] = after_rotation[1][1] + tmp_cs[1]
-        cld_ctr_2[f_cont, 2] = after_rotation[1][2] + tmp_cs[2]
-        for i in range(0, f_cont, 1):
-            if (cld_ctr[i, 0] - cld_ctr[f_cont, 0]) ** 2 + (cld_ctr[i, 1] - cld_ctr[f_cont, 1]) ** 2 + (
-                    cld_ctr[i, 2] - cld_ctr[f_cont, 2]) ** 2 > (r_cylindar + r_cylindar) ** 2 + min_gap and abs(
-                cld_ctr_1[f_cont, 2]) < abs(r_disk * td_ratio - r - min_gap) and (
-                    cld_ctr_2[i, 0] - cld_ctr_2[f_cont, 0]) ** 2 + (cld_ctr_2[i, 1] - cld_ctr_2[f_cont, 1]) ** 2 + (
-                    cld_ctr_2[i, 2] - cld_ctr_2[f_cont, 2]) ** 2 > (r_cylindar + r_cylindar) ** 2 + min_gap:
-                f_avlb = f_avlb * 1
-            else:
-                f_avlb = f_avlb * 0
+        before_rotation = np.zeros((cld_ctr_num, 3))
+        after_rotation = np.zeros((cld_ctr_num, 3))
+        for i in range(0, cld_ctr_num, 1):
+            before_rotation[i][2] = i * s * p / cld_ctr_num
+        for i in range(0, cld_ctr_num, 1):
+            after_rotation[i] = np.dot(T1_matrix, np.dot(T2_matrix, np.dot(T3_matrix, before_rotation[i])))
+        for i in range(0, cld_ctr_num, 1):
+            cld_ctr[f_cont * cld_ctr_num + i, 0] = after_rotation[i, 0] + tmp_cs[0]
+            cld_ctr[f_cont * cld_ctr_num + i, 1] = after_rotation[i, 1] + tmp_cs[1]
+            cld_ctr[f_cont * cld_ctr_num + i, 2] = after_rotation[i, 2] + tmp_cs[2]
+        if f_cont == 0: # in the first fibre, only check every sphere is within disk
+            for i in range(0, cld_ctr_num, 1):
+                if abs(cld_ctr[i, 0]) < r_disk * (1 - math.cos(alpha)) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
+                        (r_disk * (1 - math.cos(alpha))) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
+                    cld_ctr[i, 2]) < 2 * r_disk * td_ratio / 2 - min_gap:
+                    f_avlb = f_avlb * 1
+                else:
+                    f_avlb = f_avlb * 0
+        else:   # in other fibres, check every sphere is within disk, and new spheres not overlapping with old spheres
+            for i in range(f_cont*cld_ctr_num+1, (f_cont+1)*cld_ctr_num, 1):
+                if abs(cld_ctr[i, 0]) < r_disk * (1 - math.cos(alpha)) - min_gap and abs(cld_ctr[i, 0]) < math.sqrt(
+                        (r_disk * (1 - math.cos(alpha))) ** 2 - (cld_ctr[i, 0]) ** 2) - min_gap and abs(
+                    cld_ctr[i, 2]) < 2 * r_disk * td_ratio / 2 - min_gap:
+                    f_avlb = f_avlb * 1
+                else:
+                    f_avlb = f_avlb * 0
+            for i in range(f_cont*cld_ctr_num+1, (f_cont+1)*cld_ctr_num, 1):
+                for j in range(0, f_cont * cld_ctr_num, 1):
+                    if (cld_ctr[i, 0] - cld_ctr[j, 0]) ** 2 + (cld_ctr[i, 1] - cld_ctr[j, 1]) ** 2 + (
+                            cld_ctr[i, 2] - cld_ctr[j, 2]) ** 2 > (r_cylindar + r_cylindar) ** 2 + min_gap:
+                        f_avlb = f_avlb * 1
+                    else:
+                        f_avlb = f_avlb * 0
         if f_avlb == 1:
             local_cs.append(tmp_cs)
             for j in range(0, n_sph, 1):
@@ -283,15 +295,15 @@ def b4_ctrs():
 
 org_ctr = s_ctrs()
 f_ctrs()
-#b1_ctrs()
-#b2_ctrs()
-#b3_ctrs()
-#b4_ctrs()
+# b1_ctrs()
+# b2_ctrs()
+# b3_ctrs()
+# b4_ctrs()
 
 # Record fibre locations
-f1 = open('sph_ctrs.txt', 'w')
+f1 = open('cph_ctr.txt', 'w')
 for i in range(len(sph_ctr)):
-    f1.write('%11.5f' % sph_ctr[i][0] + ',' + '%11.5f' % sph_ctr[i][1] + ',' + '%11.5f' % sph_ctr[i][2] + '\n')
+    f1.write('%11.5f' % sph_ctr[i, 0] + ',' + '%11.5f' % sph_ctr[i, 1] + ',' + '%11.5f' % sph_ctr[i, 2] + '\n')
 f1.close()
 f1 = open('CS_trans.txt', 'w')
 for i in range(len(local_cs)):
@@ -301,34 +313,36 @@ f1 = open('CS_rotat.txt', 'w')
 for i in range(len(local_cs)):
     f1.write('%11.5f' % local_cs[i][3] + ',' + '%11.5f' % local_cs[i][4] + ',' + '%11.5f' % local_cs[i][5] + '\n')
 f1.close()
+
+
 ## Record b1 location
-#f1 = open('b1_ctrs.txt', 'w')
-#for i in range(0, len(b1_ctr), 1):
+# f1 = open('b1_ctrs.txt', 'w')
+# for i in range(0, len(b1_ctr), 1):
 #    f1.write(
 #        '%11.5f' % b1_ctr[i, 0] + ' ' + '%11.5f' % b1_ctr[i, 1] + ' ' + '%11.5f' % b1_ctr[i, 2] + '%11.5f' % b1_ctr[
 #            i, 3] + '\n')
-#f1.close()
+# f1.close()
 ## Record b2 location
-#f1 = open('b2_ctrs.txt', 'w')
-#for i in range(0, len(b2_ctr), 1):
+# f1 = open('b2_ctrs.txt', 'w')
+# for i in range(0, len(b2_ctr), 1):
 #    f1.write(
 #        '%11.5f' % b2_ctr[i, 0] + ' ' + '%11.5f' % b2_ctr[i, 1] + ' ' + '%11.5f' % b2_ctr[i, 2] + '%11.5f' % b2_ctr[
 #            i, 3] + '\n')
-#f1.close()
+# f1.close()
 ## Record b3 location
-#f1 = open('b3_ctrs.txt', 'w')
-#for i in range(0, len(b3_ctr), 1):
+# f1 = open('b3_ctrs.txt', 'w')
+# for i in range(0, len(b3_ctr), 1):
 #    f1.write(
 #        '%11.5f' % b3_ctr[i, 0] + ' ' + '%11.5f' % b3_ctr[i, 1] + ' ' + '%11.5f' % b3_ctr[i, 2] + '%11.5f' % b3_ctr[
 #            i, 3] + '\n')
-#f1.close()
+# f1.close()
 ## Record b4 location
-#f1 = open('b4_ctrs.txt', 'w')
-#for i in range(0, len(b4_ctr), 1):
+# f1 = open('b4_ctrs.txt', 'w')
+# for i in range(0, len(b4_ctr), 1):
 #    f1.write(
 #        '%11.5f' % b4_ctr[i, 0] + ' ' + '%11.5f' % b4_ctr[i, 1] + ' ' + '%11.5f' % b4_ctr[i, 2] + '%11.5f' % b4_ctr[
 #            i, 3] + '\n')
-#f1.close()
+# f1.close()
 
 
 # plot spheres in matplotlib
@@ -345,14 +359,14 @@ def plt_all():
     for i in range(0, f_num, 1):
         for j in range(i * len(org_ctr), (i + 1) * len(org_ctr), 1):
             ax.scatter(sph_ctr[j][0], sph_ctr[j][1], sph_ctr[j][2], c=sphere_color[i])  # draw spheres (scatters)
-#    for i in range(0, len(b1_ctr), 1):
-#        ax.scatter(b1_ctr[i][0], b1_ctr[i][1], b1_ctr[i][2], c='b')  # plot aggregate 1 (scatters)
-#    for i in range(0, len(b2_ctr), 1):
-#        ax.scatter(b2_ctr[i][0], b2_ctr[i][1], b2_ctr[i][2], c='g')  # plot aggregate 2 (scatters)
-#    for i in range(0, len(b3_ctr), 1):
-#        ax.scatter(b3_ctr[i][0], b3_ctr[i][1], b3_ctr[i][2], c='r')  # plot aggregate 3 (scatters)
-#    for i in range(0, len(b4_ctr), 1):
-#        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 4 (scatters)
+    #    for i in range(0, len(b1_ctr), 1):
+    #        ax.scatter(b1_ctr[i][0], b1_ctr[i][1], b1_ctr[i][2], c='b')  # plot aggregate 1 (scatters)
+    #    for i in range(0, len(b2_ctr), 1):
+    #        ax.scatter(b2_ctr[i][0], b2_ctr[i][1], b2_ctr[i][2], c='g')  # plot aggregate 2 (scatters)
+    #    for i in range(0, len(b3_ctr), 1):
+    #        ax.scatter(b3_ctr[i][0], b3_ctr[i][1], b3_ctr[i][2], c='r')  # plot aggregate 3 (scatters)
+    #    for i in range(0, len(b4_ctr), 1):
+    #        ax.scatter(b4_ctr[i][0], b4_ctr[i][1], b4_ctr[i][2], c='c')  # plot aggregate 4 (scatters)
     plt.show()
 
 
