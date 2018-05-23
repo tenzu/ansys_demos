@@ -31,9 +31,6 @@ MP,NUXY,1,0.2
 MP,DENS,2,0.0078
 MP,EX,2,2e5
 MP,NUXY,2,0.28
-MP,DENS,3,0.0078
-MP,EX,3,2e5
-MP,NUXY,3,0.27
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 
@@ -212,6 +209,7 @@ D,ALL, , , , , ,UY, , , , ,
 ALLSEL,ALL
 
 *GET,v_max,VOLU,0,NUM,MAX	!mesh disk
+VATT,1,1,1,0
 SMRTSIZE,2  
 MSHAPE,1,3D 
 MSHKEY,0
