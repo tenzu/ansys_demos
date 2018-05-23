@@ -7,7 +7,7 @@ r_disk = 37.5  # disk radius (mm)
 td_ratio = 0.4
 alpha = 10 * math.pi / 180  # degree to radian
 min_gap = 0.1  # minimum gap between blocks (mm)
-f_num = 2  # number of fibres
+f_num = 4  # number of fibres
 
 # original segment center for cylindars (fibres)
 r = 2  # spiral fibre rotation radius (mm)

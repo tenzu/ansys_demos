@@ -1,8 +1,8 @@
-﻿1. 删除*BOUNDARY_SPC_SET
-2. 删除*SECTION_BEAM
-3. 删除*MAT
-4. 删除*CONTROL_
-5. 删除*DATABASE_EXTENT_BINARY
+﻿1. delete *BOUNDARY_SPC_SET 1 and 2
+2. delete *SECTION_BEAM
+3. delete *MAT
+4. delete *CONTROL_
+5. delete *DATABASE_
 
 *INCLUDE
 includes_3D_fibre.k

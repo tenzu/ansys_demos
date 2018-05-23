@@ -9,7 +9,7 @@ PI = acos(-1)
 r_disk = 37.5	!disk radius (mm)
 td_ratio = 0.4
 thickness = 2*r_disk*td_ratio	!disk thickness (mm)
-alpha = 10  !alpha for FBD
+alpha = 10  !alpha for FBD (in degree)
 r = 2	!spiral fibre rotation radius (mm)
 s = 8	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n equals to 2**?)
@@ -19,7 +19,7 @@ margin = r*0.1  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.56   !radius of fibre section (mm)
-f_num = 2	!number of fibres
+f_num = 4	!number of fibres
 
 /PREP7
 ET,1,SOLID164
@@ -34,8 +34,8 @@ MP,NUXY,2,0.28
 MP,DENS,3,0.0078
 MP,EX,3,2e5
 MP,NUXY,3,0.27
-*DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
+*DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 
 *DIM,CS_trans,ARRAY,f_num,3,1, , ,   !read CS transmissions
 *VREAD,CS_trans,'CS_trans','txt',,JIK,3,f_num,1, , 
@@ -44,48 +44,101 @@ MP,NUXY,3,0.27
 *VREAD,CS_rotat,'CS_rotat','txt',,JIK,3,f_num,1, , 
 (3F12.5) 
 
+wpoff,0,0,-thickness/2    !draw disk
+CYL4, , , , ,r_disk,90
+CSWPLA,11,1,1,1,
+K, ,r_disk,alpha,,  
+CSYS,0  
+*GET,k_max,KP,0,NUM,MAX !get maximum keypoint number
+KWPAVE,k_max
+*GET,i_x,KP,k_max,LOC,X    !get keypoint x_location
+*GET,i_z,KP,k_max,LOC,Z    !get keypoint z_location
+K, ,i_x,0,i_z,
+WPCSYS,-1
+wpoff,0,0,-thickness/2
+LSTR,k_max,k_max+1
+*GET,l_max,LINE,0,NUM,MAX   !get maximum line number
+*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
+ASBL,a_max,l_max
+ADELE,a_max+1, , ,1
+NUMCMP,AREA
+ARSYM,X,a_max, , , ,0,0
+ARSYM,Y,a_max, , , ,0,0
+ARSYM,Y,a_max+1, , , ,0,0
+ASEL,S,LOC,Z,i_z
+AADD,ALL
+ALLSEL,ALL  
+NUMCMP,AREA 
+*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
+VOFFST,a_max,thickness, ,
+WPCSYS,-1,0
+
+*DO,i,1,f_num,1	!draw hollow cylindars and fibres
+	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
+	wpro,CS_rotat(i,1,1),CS_rotat(i,2,1),CS_rotat(i,3,1)
+	CSWPLA,11,0,1,1,	!temporary Cartesian coordinate system
+	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
+    WPCSYS,-1
+
+	CSYS,11,
+    CYL4, , ,0,0,r,90,s*p   !draw hollow cylindar with margins
+	CYL4, , ,r,0,r+margin,90,s*p
+    *GET,v_max,VOLU,0,NUM,MAX	!v_max for temporarily storing maximum volume number
+    VSEL,S, , ,v_max-1,v_max,1,
+    VGLUE,ALL
+    CSYS,11,
+	VSYMM,X,ALL, , , ,0,0
+	VSYMM,Y,ALL, , , ,0,0
+    NUMCMP,VOLU
+    ALLSEL,ALL
+    CSYS,0
+    WPCSYS,-1,0
+*ENDDO
+CSYS,0  
+WPCSYS,-1,0 
+VOVLAP,ALL
+NUMCMP,VOLU
+
 *DO,i,1,f_num,1	!draw hollow cylindars and fibres
 	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
 	wpro,CS_rotat(i,1,1),CS_rotat(i,2,1),CS_rotat(i,3,1)
 	CSWPLA,11,0,1,1,	!temporary Cartesian coordinate system
 	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
 
-	CSYS,11,
-    CYL4, , ,0,0,r,90,s*p
-	CYL4, , ,r,0,r+margin,90,s*p   !draw hollow cylindar with margins
-    VGLUE,ALL
-	VATT,1,1,1,0
-	CSYS,12,
-    LSEL,S,LOC,X,0,r,  
-    LSEL,R,LOC,Y,0  
+    VSEL,S,LOC,X,0,r+margin,    !mesh size control in single cylindar
+    ASLV,R  
+    LSLA,R  
+    LSEL,S,LOC,X,0,r,
     LSEL,R,LOC,Z,0  
     LESIZE,ALL, , ,n/4, ,1, , ,0,   
     ALLSEL,ALL  
-    LSEL,S,LOC,X,0,r,  
-    LSEL,R,LOC,Y,90  
-    LSEL,R,LOC,Z,0  
+    VSEL,S,LOC,X,0,r+margin,
+    ASLV,R  
+    LSLA,R  
+    LSEL,S,LOC,X,0,r,
+    LSEL,R,LOC,Z,s*p  
     LESIZE,ALL, , ,n/4, ,1, , ,0,   
     ALLSEL,ALL  
 
+    VSEL,S,LOC,X,0,r+margin,
+    ASLV,R  
+    LSLA,R  
     LSEL,S,LOC,X,r,r+margin,  
     LSEL,R,LOC,Y,0  
     LSEL,R,LOC,Z,0  
     LESIZE,ALL, , ,1, ,1, , ,0,   
     ALLSEL,ALL  
-    LSEL,S,LOC,X,r  
-    LSEL,R,LOC,Z,0  
-    LESIZE,ALL, , ,n/4, ,1, , ,0,   
-    ALLSEL,ALL  
-    LSEL,S,LOC,X,r  
+    VSEL,S,LOC,X,0,r+margin,
+    ASLV,R  
+    LSLA,R  
+    LSEL,S,LOC,X,0  
     LSEL,R,LOC,Y,0  
     LESIZE,ALL, , ,n*p, ,1, , ,0,   
-    ALLSEL,ALL
+    ALLSEL,ALL  
 
+    VSEL,S,LOC,X,0,r+margin,
+	VATT,1,1,1,0
 	VSWEEP,ALL
-    CSYS,11,
-	VSYMM,X,ALL, , , ,0,0   !!!!error here!!!!
-	VSYMM,Y,ALL, , , ,0,0
-    NUMMRG,ALL, , , ,LOW
 
 	*GET,n_max,NODE,0,NUM,MAX !n_max for temporarily storing maximum node number
 	CSYS,12
@@ -118,89 +171,73 @@ MP,NUXY,3,0.27
 	TYPE,2
 	MAT,2
 	REAL,1
-	ESYS,0
 	SECNUM,
 	*DO,j,1,n*p,1   !draw beam elements for single fibre
 	    E,n_max+j,n_max+j+1
 	*ENDDO
+	ALLSEL,ALL
+	CSYS,0
 	WPCSYS,-1,0
 *ENDDO
-!
-!*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
-!    *SET,j,C_NODES(i,1,1)
-!    *IF,i,eq,1,then
-!        NSEL,S,,,j
-!    *ELSE
-!        NSEL,A,,,j
-!    *ENDIF
-!*ENDDO
-!CM,C_NODES,NODE
-!CMSEL,A,C_NODES
-!ALLSEL,ALL
-!
-!*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
-!    *SET,j,F_NODES(i,1,1)
-!    *IF,i,eq,1,then
-!        NSEL,S,,,j
-!    *ELSE
-!        NSEL,A,,,j
-!    *ENDIF
-!*ENDDO
-!CM,F_NODES,NODE
-!CMSEL,A,F_NODES
-!ALLSEL,ALL
-!
-!CMSEL,S,C_NODES 	!concrete node set for 1D contact
-!D,ALL, , , , , ,UX, , , , ,
-!ALLSEL,ALL
-!CMSEL,S,F_NODES 	!fibre node set for 1D contact
-!D,ALL, , , , , ,UY, , , , ,
-!ALLSEL,ALL
-!
-!wpoff,0,0,-thickness/2    !draw disk
-!CYL4, , , , ,r_disk,90
-!CSWPLA,11,1,1,1,
-!K, ,r_disk,alpha,,  
-!CSYS,0  
-!*GET,k_max,KP,0,NUM,MAX !get maximum keypoint number
-!KWPAVE,k_max
-!*GET,i_x,KP,k_max,LOC,X    !get keypoint x_location
-!*GET,i_z,KP,k_max,LOC,Z    !get keypoint z_location
-!K, ,i_x,0,i_z,
-!WPCSYS,-1
-!wpoff,0,0,-thickness/2
-!LSTR,k_max,k_max+1
-!*GET,l_max,LINE,0,NUM,MAX   !get maximum line number
-!*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
-!ASBL,a_max,l_max
-!ADELE,a_max+1, , ,1
-!NUMCMP,AREA
-!ARSYM,X,a_max, , , ,0,0
-!ARSYM,Y,a_max, , , ,0,0
-!ARSYM,Y,a_max+1, , , ,0,0
-!ASEL,S,LOC,Z,i_z
-!AADD,ALL
-!ALLSEL,ALL  
-!NUMCMP,AREA 
-!*GET,a_max,AREA,0,NUM,MAX   !get maximum area number
-!VOFFST,a_max,thickness, ,
-!VOVLAP,ALL
-!MSHAPE,1,3D
-!MSHKEY,0
-!LESIZE,ALL,PI*2*r_disk/128, , , ,1, , ,0
-!*GET,v_max,VOLU,0,NUM,MAX	!v_max for temporarily storing maximum volumn number
-!VATT,3,1,1,0
-!VMESH,4*f_num,v_max,1
-!
-!ESEL,S,MAT,,1   !merge concrete nodes
-!NSLE,R  
-!NUMMRG,NODE, , , ,LOW   
-!ALLSEL,ALL  
-!
-!FINISH
-!/SOL
-!TIME,3,
-!EDRST, ,0.1,
-!EDHTIME, ,0,
-!EDDUMP, ,0,
-!EDWRITE,LSDYNA,'tmp','k',' '
+
+*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
+    *SET,j,C_NODES(i,1,1)
+    *IF,i,eq,1,then
+        NSEL,S,,,j
+    *ELSE
+        NSEL,A,,,j
+    *ENDIF
+*ENDDO
+CM,C_NODES,NODE
+CMSEL,A,C_NODES
+ALLSEL,ALL
+
+*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
+    *SET,j,F_NODES(i,1,1)
+    *IF,i,eq,1,then
+        NSEL,S,,,j
+    *ELSE
+        NSEL,A,,,j
+    *ENDIF
+*ENDDO
+CM,F_NODES,NODE
+CMSEL,A,F_NODES
+ALLSEL,ALL
+
+CMSEL,S,C_NODES 	!concrete node set for 1D contact
+D,ALL, , , , , ,UX, , , , ,
+ALLSEL,ALL
+CMSEL,S,F_NODES 	!fibre node set for 1D contact
+D,ALL, , , , , ,UY, , , , ,
+ALLSEL,ALL
+
+*GET,v_max,VOLU,0,NUM,MAX	!mesh disk
+SMRTSIZE,2  
+MSHAPE,1,3D 
+MSHKEY,0
+VMESH,v_max
+
+ESEL,S,MAT,,1   !merge concrete nodes
+NSLE,R  
+NUMMRG,NODE, , , ,LOW   
+ALLSEL,ALL  
+
+NSEL,S,LOC,X,-r_disk*cos(alpha*PI/180)
+CM,l_FBD,NODE   
+CMSEL,A,l_FBD   
+!D,ALL, , , , , ,UX,UY, , , ,
+EDVE,VELO,L_FBD,20,0,0,0,0,0, , , , , , 
+ALLSEL,ALL  
+NSEL,S,LOC,X,r_disk*cos(alpha*PI/180)
+CM,r_FBD,NODE   
+CMSEL,A,r_FBD   
+D,ALL, , , , , ,UX,UZ, , , ,
+ALLSEL,ALL  
+
+FINISH
+/SOL
+TIME,3,
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0,
+EDWRITE,LSDYNA,'tmp','k',' '
