@@ -6,25 +6,25 @@ MP,PRXY,1,0.3
 SECTYPE, 1, BEAM, RECT, ,0 !截面属性mm
 SECOFFSET, CENT
 SECDATA,0.1,0.06,0,0,0,0,0,0,0,0,0,0
-K,1,0,0,0 !关键点m
-K, ,4,,,
-K, ,8,,,
-K, ,16,,,   
-K, ,24,,,   
-LSTR,       1,       2  
-LSTR,       2,       3  
-LSTR,       3,       4  
-LSTR,       4,       5  
+K_NUM = 25
+*DO,i,1,K_NUM,1
+    K, ,i,,,
+*ENDDO
+*DO,i,1,K_NUM-1,1
+    LSTR,i,i+1
+*ENDDO
 LATT,1, ,1, , , ,1 !线的单元属性
 LESIZE, all, ,0.5, !单元尺寸
 LMESH,ALL !线分网
 !/ESHAPE,1.0 !单元形状
 DK,1, , , ,0,ALL, , , , , ,   !施加位移约束
-DK,3, , , ,0,UY, , , , , ,   
-DK,4, , , ,0,UY, , , , , ,   
-DK,5, , , ,0,UY, , , , , ,   
-FK,2,FY,-40000   !集中力
-SFBEAM,4,2,PRES,10000,,, , , ,0 !均布载荷N/m
+DK,9, , , ,0,UY, , , , , ,   
+DK,17, , , ,0,UY, , , , , ,   
+DK,25, , , ,0,UY, , , , , ,   
+FK,5,FY,-40000   !集中力
+*DO,i,17,K_NUM-1,1
+    SFBEAM,i,2,PRES,10000,,, , , ,0 !均布载荷N/m
+*ENDDO
 /SOLU
 SOLVE !求解
 /POST1
