@@ -1,0 +1,42 @@
+/PREP7
+ET,1,BEAM188 !单元类型
+KEYOPT,1,3,3 !形函数
+MP,EX,1,2e11 !材料属性MPa
+MP,PRXY,1,0.3
+SECTYPE, 1, BEAM, RECT, ,0 !截面属性mm
+SECOFFSET, CENT
+SECDATA,0.1,0.06,0,0,0,0,0,0,0,0,0,0
+K_NUM = 25
+*DO,i,1,K_NUM,1
+    K, ,i,,,
+*ENDDO
+*DO,i,1,K_NUM-1,1
+    LSTR,i,i+1
+*ENDDO
+LATT,1, ,1, , , ,1 !线的单元属性
+LESIZE, all, ,0.5, !单元尺寸
+LMESH,ALL !线分网
+!/ESHAPE,1.0 !单元形状
+DK,1, , , ,0,ALL, , , , , ,   !施加位移约束
+DK,9, , , ,0,UY, , , , , ,   
+DK,17, , , ,0,UY, , , , , ,   
+DK,25, , , ,0,UY, , , , , ,   
+FK,5,FY,-40000   !集中力
+*DO,i,17,K_NUM-1,1
+    SFBEAM,i,2,PRES,10000,,, , , ,0 !均布载荷N/m
+*ENDDO
+/SOLU
+SOLVE !求解
+/POST1
+ETABLE,MZ_I,SMISC, 3 !定义弯矩单元表
+ETABLE,MZ_J,SMISC, 16
+PLLS,MZ_I,MZ_J,1,0 !弯矩图云图
+PRETAB,MZ_I,MZ_J !弯矩列表
+ETABLE,S_I,SMISC, 6 !定义剪力单元表
+ETABLE,S_J,SMISC, 19
+PLLS,S_I,S_J,1,0 !剪力图云图
+PRETAB,S_I,S_J !剪力列表
+ETABLE,SBYT_I,SMISC, 32 !弯曲应力单元表
+ETABLE,SBYT_J,SMISC, 37
+PLLS,SBYT_I,SBYT_J,1,0 !应力图云图
+PRETAB,SBYT_I,SBYT_J !应力列表

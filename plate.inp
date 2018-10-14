@@ -1,0 +1,49 @@
+! Parameters
+a = 4   ! length
+b = 2   ! width
+t = 0.005   !thickness
+E = 2e11    !young's modulus
+Ep = 0.3 !poisson's ratio
+P = 100 !pressure magnitude
+
+WPSTYLE,,,,,,,,0
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+/PREP7  
+ET,1,SHELL181   
+MPTEMP,1,0  
+MPDATA,EX,1,,E   
+MPDATA,PRXY,1,,Ep
+sect,1,shell,,  
+secdata, t,1,0,3
+secoffset,MID   
+seccontrol,0,0,0, 0, 1, 1, 1
+RECTNG,-a/2,a/2,-b/2,b/2,   
+LATT,1, ,1, , , ,1  
+LESIZE,ALL,0.1, , , ,1, , ,1,   
+MSHKEY,1
+AMESH,all   
+DL,2, ,UX,   
+DL,2, ,UY,   
+DL,2, ,UZ,   
+DL,4, ,UX,   
+DL,4, ,UY,   
+DL,4, ,UZ,   
+DL,1, ,ALL,  
+DL,3, ,ALL,  
+!!!!surface load!!!!
+SFA,all,1,PRES,P 
+
+!!!!point load!!!!  位移互等定理（节点491和715）
+!F,491,FZ,-1000
+
+/SOL
+/STATUS,SOLU
+SOLVE   
+/POST1  
+/VIEW,1,1,1,1   
+/ANG,1  
+/DSCALE,ALL,1.0 
+/EFACET,1   
+PLNSOL, U,Z, 0,1.0  
