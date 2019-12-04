@@ -11,15 +11,17 @@ td_ratio = 0.4
 thickness = 2*r_disk*td_ratio	!disk thickness (mm)
 r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
-n = 32	!division in single pitch (n equals to 2**?)
-p = 1.5	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
+n = 12	!division in single pitch (n must be multiple of 4)
+D = n/4   !division in 90 degrees
+p = 1.0	!spital fibre total pitch number (should equal to an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
-margin = 2*PI*r/n  !margin from fibre to outer cylindar (mm)
+!margin = 2*PI*r/n  !margin from fibre to outer cylindar (mm)
+margin = r/D  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
 f_num = 1	!number of fibres
-D = n/4   !division in 90 degrees
+
 
 /VIEW,1,1,1,1   
 /ANG,1  
@@ -45,7 +47,6 @@ MP,NUXY,2,0.28
 !*VREAD,CS_rotat,'CS_rotat','txt',,JIK,3,f_num,1, , 
 !(3F12.5) 
 
-
 *DO,i,1,f_num,1	!draw hollow cylindars and fibres
 	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
 	wpro,CS_rotat(i,1,1),CS_rotat(i,2,1),CS_rotat(i,3,1)
@@ -53,9 +54,9 @@ MP,NUXY,2,0.28
 	CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
 
 	CSYS,11,
-    CYL4, , ,0,0,r,90,s*p
-	CYL4, , ,r,0,r+margin,90,s*p   !draw hollow cylindar with margins
-    CYL4, , ,r+margin,0,3*r,90,s*p
+    CYL4, , ,0,0,r,90,s*p   !inner cylindar (from 0 to r)
+	CYL4, , ,r,0,r+margin,90,s*p   !middle cylindar (from r to r+margin)
+    CYL4, , ,r+margin,0,3*r,90,s*p  !outer cylindar (from r+margin to 3*r)
     VGLUE,ALL
 	VATT,1,1,1,0
 	CSYS,12,
@@ -83,12 +84,17 @@ MP,NUXY,2,0.28
     LSEL,R,LOC,Y,0  
     LSEL,R,LOC,Z,0  
     LESIZE,ALL, , ,1, ,1, , ,0,   !middle 1/4 cylindar radial direction mesh size
+    ALLSEL,ALL
+    LSEL,S,LOC,X,r,r+margin,  
+    LSEL,R,LOC,Y,90  
+    LSEL,R,LOC,Z,0  
+    LESIZE,ALL, , ,1, ,1, , ,0,   !another middle 1/4 cylindar radial direction mesh size
     ALLSEL,ALL  
-    LSEL,S,LOC,X,r  
+    LSEL,S,LOC,X,r+margin
     LSEL,R,LOC,Z,0  
     LESIZE,ALL, , ,D, ,1, , ,0,   !middle 1/4 cylindar annular direction mesh size
     ALLSEL,ALL  
-    LSEL,S,LOC,X,r  
+    LSEL,S,LOC,X,r+margin  
     LSEL,R,LOC,Y,0  
     LESIZE,ALL, , ,n*p, ,1, , ,0,   !middle 1/4 cylindar axial direction mesh size
     ALLSEL,ALL
@@ -96,9 +102,18 @@ MP,NUXY,2,0.28
     LSEL,S,LOC,X,r+margin,3*r,  
     LSEL,R,LOC,Y,0  
     LSEL,R,LOC,Z,0  
-    LESIZE,ALL, , ,D, ,1, , ,0,   !outer 1/4 cylindar radial direction mesh size
+    LESIZE,ALL, , ,2*D, ,1, , ,0,   !outer 1/4 cylindar radial direction mesh size
     ALLSEL,ALL
-    LSEL,S,LOC,X,r+margin  
+    LSEL,S,LOC,X,r+margin,3*r,  
+    LSEL,R,LOC,Y,0  
+    LSEL,R,LOC,Z,s*p  
+    LESIZE,ALL, , ,2*D, ,1, , ,0,   !another outer 1/4 cylindar radial direction mesh size
+    ALLSEL,ALL  
+    LSEL,S,LOC,X,3*r
+    LSEL,R,LOC,Z,0  
+    LESIZE,ALL, , ,D, ,1, , ,0,   !middle 1/4 cylindar annular direction mesh size
+    ALLSEL,ALL  
+    LSEL,S,LOC,X,3*r  
     LSEL,R,LOC,Y,0  
     LESIZE,ALL, , ,n*p, ,1, , ,0,   !outer 1/4 cylindar axial direction mesh size
     ALLSEL,ALL
@@ -141,8 +156,7 @@ MP,NUXY,2,0.28
 	REAL,1
 	ESYS,0
 	SECNUM,
-	!*DO,j,1,n*p,1   !draw beam elements for single fibre
-	*DO,j,1,3,1   !draw beam elements for single fibre
+	*DO,j,1,n*p,1   !draw beam elements for single fibre
 	    E,ii+j,ii+j+1
 	*ENDDO
 	WPCSYS,-1,0
