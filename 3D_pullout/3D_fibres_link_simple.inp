@@ -11,9 +11,9 @@ td_ratio = 0.4
 thickness = 2*r_disk*td_ratio	!disk thickness (mm)
 r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
-n = 12	!division in single pitch (n must be multiple of 4)
+n = 32	!division in single pitch (n must be multiple of 4)
 D = n/4   !division in 90 degrees
-p = 1+5/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+p = 1+7/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
 !margin = 2*PI*r/n  !margin from fibre to outer cylindar (mm)
 margin = r/D  !margin from fibre to outer cylindar (mm)
@@ -21,7 +21,6 @@ K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
 f_num = 1	!number of fibres
-
 
 /VIEW,1,1,1,1   
 /ANG,1  
@@ -39,13 +38,8 @@ MP,EX,2,2e5
 MP,NUXY,2,0.28
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
-
 *DIM,CS_trans,ARRAY,f_num,3,1, , ,   !read CS transmissions
-!*VREAD,CS_trans,'CS_trans','txt',,JIK,3,f_num,1, , 
-!(3F12.5) 
 *DIM,CS_rotat,ARRAY,f_num,3,1, , ,   !read CS rotations
-!*VREAD,CS_rotat,'CS_rotat','txt',,JIK,3,f_num,1, , 
-!(3F12.5) 
 
 *DO,i,1,f_num,1	!draw hollow cylindars and fibres
 	wpof,CS_trans(i,1,1),CS_trans(i,2,1),CS_trans(i,3,1)
@@ -111,7 +105,7 @@ MP,NUXY,2,0.28
     ALLSEL,ALL  
     LSEL,S,LOC,X,3*r
     LSEL,R,LOC,Z,0  
-    LESIZE,ALL, , ,D, ,1, , ,0,   !middle 1/4 cylindar annular direction mesh size
+    LESIZE,ALL, , ,D, ,1, , ,0,   !outer 1/4 cylindar annular direction mesh size
     ALLSEL,ALL  
     LSEL,S,LOC,X,3*r  
     LSEL,R,LOC,Y,0  
