@@ -50,16 +50,16 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
 *CONTROL_TERMINATION
 $#  endtim    endcyc     dtmin    endeng    endmas
-  100.0000         0     0.000     0.000     0.000
+  30000.00         0     0.000     0.000     0.000
 *CONTROL_TIMESTEP
 $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
      0.000  0.900000         0     0.000     0.000         0         0         0
 $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
      0.000         0         0                         0.000
 *DATABASE_BINARY_D3PLOT
-0.1000    
+10.000    
 *DATABASE_BINARY_D3THDT
-0.3000E-02
+2.0000
 *DATABASE_BINARY_D3DUMP
          0
 *DATABASE_EXTENT_BINARY
