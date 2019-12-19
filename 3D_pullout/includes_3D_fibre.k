@@ -89,20 +89,20 @@ $#    eta1      eta2      eta3      eta4      eta5      eta6      eta7      eta8
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 $#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-$*MAT_ADD_EROSION
-$$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-$         1     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
-$$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-$     0.000     0.000     0.000  0.200000     0.000     0.000     0.000     0.000
-$$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
-$         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
-$$#   lcfld             epsthin    engcrt    radcrt
-$         0         0     0.000     0.000     0.000
+*MAT_ADD_EROSION
+$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
+         1     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
+$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
+     0.000     0.000     0.000  0.001000     0.000     0.000     0.000     0.000
+$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
+         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
+$#   lcfld             epsthin    engcrt    radcrt
+         0         0     0.000     0.000     0.000
 *SECTION_BEAM
 $#   secid    elform      shrf   qr/irid       cst     scoor       nsm
          2         1     0.000         0         1     0.000     0.000
 $#     ts1       ts2       tt1       tt2     nsloc     ntloc
-  0.560000  0.560000     0.000     0.000     0.000     0.000
+  0.500000  0.500000     0.000     0.000     0.000     0.000
 *MAT_PLASTIC_KINEMATIC
 $#     mid        ro         e        pr      sigy      etan      beta
          2 7.8000E-3 2.0000E+5  0.280000 1280.0000 81.000000  1.000000
@@ -112,7 +112,7 @@ $#     src       srp        fs        vp
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          2     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     0.000  0.250000     0.000     0.000     0.000     0.000
+     0.000     0.000     210.0  0.250000     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
