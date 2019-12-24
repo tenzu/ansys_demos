@@ -50,7 +50,7 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
 *CONTROL_TERMINATION
 $#  endtim    endcyc     dtmin    endeng    endmas
-  30000.00         0     0.000     0.000     0.000
+  10000.00         0     0.000     0.000     0.000
 *CONTROL_TIMESTEP
 $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
      0.000  0.900000         0     0.000     0.000         0         0         0
@@ -59,9 +59,9 @@ $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
 *DATABASE_BINARY_D3PLOT
 10.000    
 *DATABASE_BINARY_D3THDT
-2.0000
+5.0000
 *DATABASE_BINARY_D3DUMP
-         0
+1000000
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
@@ -91,9 +91,9 @@ $#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-         1     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
+         1     0.000     0.000     0.000   0.00050     0.000  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     0.000  0.001000     0.000     0.000     0.000     0.000
+     0.000     0.000     1.710    0.0010     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
