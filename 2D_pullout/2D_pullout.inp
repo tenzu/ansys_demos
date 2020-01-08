@@ -1,3 +1,7 @@
+FINISH
+/CLEAR,NOSTART
+
+
 /NOPR
 KEYW,PR_SET,1
 KEYW,PR_STRUC,1
@@ -10,9 +14,10 @@ H = 75  !total depth of specimen (mm)
 r = 1	!spiral fibre coil radius (mm)
 r_outer = 3*r   !outer radius of outer cylindar
 s = 10 	!spiral fibre pitch (mm)
-n = 32	!division in single pitch (n must be multiple of 4)
+n = 16	!division in single pitch (n must be multiple of 4)     !!!!temporarily fixed to 16, due to tmp(17,1,1)!!!!
 D = n/4   !division in 90 degrees
-p = 2+1/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+!p = 2+1/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+p = 1	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
 theta = p*360	!spiral fibre total rotation angle (DEG)
 margin = r/D  !margin from fibre to outer cylindar (mm)
 K_num = p*n+1	!total node number in one spiral fibre
@@ -33,431 +38,112 @@ MP,NUXY,2,0.28
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !concrete nodes for 1D contact
 
-RECTNG,-s*p,0,-(r+margin),r+margin,
-RECTNG,0,3*r,-(r+margin),r+margin,
-RECTNG,3*r,H,-(r+margin),r+margin,
-RECTNG,-s*p,0,-H/2,H/2,
-RECTNG,0,3*r,-H/2,H/2,
-RECTNG,3*r,H,-H/2,H/2
-AOVLAP,ALL
-VATT,1,1,1,0
 
-!!!!to do!!!!
-*GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
-*DO,j,1,n*p+1,1 !draw nodes for single fibre
-    r1=r-margin/2
-    r2=r+margin/2
-    NSEL,S,LOC,X,r1,r2
-    theta1=mod(360*(j-1)/n,360)-360/n/D
-    theta2=mod(360*(j-1)/n,360)+360/n/D
-    *IF,theta1,lt,theta2,THEN
-        NSEL,R,LOC,Y,theta1,theta2
-    *ELSE
-        NSEL,R,LOC,Y,-(360-theta1),theta2
-    *ENDIF
-    gama1=s/n*(j-1)-s/n/D/2
-    gama2=s/n*(j-1)+s/n/D/2
-    NSEL,R,LOC,Z,gama1,gama2
-    *GET,ijk,NODE,0,NUM,MIN
-    *SET,C_NODES(j,1,1),ijk
-    *GET,iii,NODE,ijk,LOC,X
-    *GET,jjj,NODE,ijk,LOC,Y
-    *GET,kkk,NODE,ijk,LOC,Z
-    N,,iii,jjj,kkk
-	*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
-	*SET,F_NODES(j,1,1),n_max
-    ALLSEL,ALL
+*DIM,SPLINE,ARRAY,f_num*(n*p+1),2,1, , ,
+*DIM,K_spline,ARRAY,f_num*(n*p+1),1,1, , ,
+*DO,i,0,n*p,1   !keypoints for spline
+    *SET,SPLINE(i+1,1,1),s*p/n*i
+    *SET,SPLINE(i+1,2,1),r*sin(2*PI/s/p*SPLINE(i+1,1,1))
+    K,,SPLINE(i+1,1,1),SPLINE(i+1,2,1)
+    *GET,K_max,KP,0,NUM,MAX
+    *SET,K_spline(i+1,1,1),K_max
 *ENDDO
+*DO,i,1,n*p-1,1   !draw spline
+    LSTR,K_spline(i,1,1),K_spline(i+1,1,1)
+*ENDDO
+K,1000,,,1, !temporary keypoint, for local coordinate only
+CSKP,11,0,1,2,1000,1,1, !local coordinate system
+CSYS,11,
+WPCSYS,-1   
 
 
 
 
 
-!WPCSYS,-1,0
-!VSBW,ALL    !cut parts
-!wpoff,0,0,-r_outer  
-!VSBW,ALL
-!!VOVLAP,ALL
-!VGLUE,ALL
-!WPCSYS,-1,0
-!VATT,1,1,1,0
-!
-!CSYS,12,
-!!VSEL,S, , ,6    !select first inner 1/4 cylindar (volume number 6)
-!VSEL,S, , ,5    !select first inner 1/4 cylindar (volume number 6)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 3
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 4
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!RECTNG,0,s*p,0,r,
+!RECTNG,s*p,H,0,r,
+!RECTNG,0,s*p,r,H/2,
+!RECTNG,s*p,H,r,H/2,
+!AGLUE,ALL
+!AATT,1,1,1,0
+!LSEL,S,LOC,X,0.25*s*p,0.5*s*p
+!LESIZE,ALL,s/n, , , ,1, , ,0,
 !ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,9    !select first middle 1/4 cylindar (volume number 9)
-!VSEL,S, , ,13    !select first middle 1/4 cylindar (volume number 9)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 3
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 4
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
+!LSEL,S,LOC,X,0.5*H,0.75*H
+!LESIZE,ALL,2*s/n, , , ,1, , ,0,
 !ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,11   !select first outer 1/4 cylindar (volume number 11)
-!VSEL,S, , ,14   !select first outer 1/4 cylindar (volume number 11)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,0
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 3
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 4
-!CMSEL,S,CM_1
-!LSEL,S,LOC,X,r_outer
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,S,LOC,X,r_outer
-!LSEL,R,LOC,Z,s*p
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
+!LSEL,S,LOC,Y,0.25*r,0.75*r
+!LESIZE,ALL,s/n/2, , , ,1, , ,0,
 !ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,2    !select second inner 1/4 cylindar (volume number 2)
-!VSEL,S, , ,2    !select second inner 1/4 cylindar (volume number 2)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Z,-3*r
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
+!LSEL,S,LOC,Y,0.25*H,0.45*H
+!LESIZE,ALL,2*s/n, , , ,1, , ,0,
 !ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,7    !select second middle 1/4 cylindar (volume number 7)
-!VSEL,S, , ,6    !select second middle 1/4 cylindar (volume number 7)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,18   !select second outer 1/4 cylindar (volume number 18)
-!VSEL,S, , ,15   !select second outer 1/4 cylindar (volume number 18)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-3*r
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,S,LOC,X,r_outer
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
-!VSEL,S, , ,1    !select third inner 1/4 cylindar (volume number 1)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0,r,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 3
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,5    !select third middle 1/4 cylindar (volume number 5)
-!VSEL,S, , ,4    !select third middle 1/4 cylindar (volume number 5)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r,r+margin,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,1, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
-!!VSEL,S, , ,17   !select third outer 1/4 cylindar (volume number 17)
-!VSEL,S, , ,8   !select third outer 1/4 cylindar (volume number 17)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin,r_outer,  
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,S,LOC,X,r_outer
-!LSEL,R,LOC,Z,-(H-s*p)
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r_outer  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,4*s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
-!
-!VSEL,S,LOC,X,0,r_outer  
-!!EXTOPT,VSWE,TETS,1
-!VSWEEP,ALL
-!ALLSEL,ALL
-!!VSEL,S,LOC,X,r_outer,H  
-!!MSHKEY,0
-!!MSHAPE,1,3d 
-!!VMESH,ALL
-!!ALLSEL,ALL
-!
-!CSYS,11,
-!VSYMM,X,ALL, , , ,0,0
-!VSYMM,Y,ALL, , , ,0,0
-!NUMMRG,ALL, , , ,LOW
-!
-!
-!*GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
-!CSYS,12
-!*DO,j,1,n*p+1,1 !draw nodes for single fibre
-!    r1=r-margin/2
-!    r2=r+margin/2
-!    NSEL,S,LOC,X,r1,r2
-!    theta1=mod(360*(j-1)/n,360)-360/n/D
-!    theta2=mod(360*(j-1)/n,360)+360/n/D
-!    *IF,theta1,lt,theta2,THEN
-!        NSEL,R,LOC,Y,theta1,theta2
-!    *ELSE
-!        NSEL,R,LOC,Y,-(360-theta1),theta2
-!    *ENDIF
-!    gama1=s/n*(j-1)-s/n/D/2
-!    gama2=s/n*(j-1)+s/n/D/2
-!    NSEL,R,LOC,Z,gama1,gama2
+!MSHKEY,1
+!AMESH,ALL
+!ARSYM,Y,ALL, , , ,0,0
+!NUMMRG,ALL, , , ,LOW   
+!NUMCMP,ALL  
+
+
+
+!*DO,i,1,n*p+1,1 !draw nodes for single fibre
+!    x1=(i-1)*s*p/n-p/n/2
+!    x2=(i-1)*s*p/n+p/n/2
+!    NSEL,S,LOC,X,x1,x2
+!    y1=tmp(i,1,1)*r/(n/4)-r/(n/4)/2
+!    y2=tmp(i,1,1)*r/(n/4)+r/(n/4)/2
+!    NSEL,R,LOC,Y,y1,y2
 !    *GET,ijk,NODE,0,NUM,MIN
-!    *SET,C_NODES(j,1,1),ijk
+!    *SET,C_NODES(i,1,1),ijk
 !    *GET,iii,NODE,ijk,LOC,X
 !    *GET,jjj,NODE,ijk,LOC,Y
-!    *GET,kkk,NODE,ijk,LOC,Z
-!    N,,iii,jjj,kkk
-!	*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
-!	*SET,F_NODES(j,1,1),n_max
+!    N,,iii,jjj
+!	*GET,N_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
+!	*SET,F_NODES(i,1,1),N_max
 !    ALLSEL,ALL
 !*ENDDO
 !
-!CSYS,11
+!
 !TYPE,2
 !MAT,2
 !REAL,1
 !ESYS,0
 !SECNUM,
-!*DO,j,1,n*p,1   !draw beam elements for single fibre
-!    E,ii+j,ii+j+1
+!*SET,F_node_min,F_NODES(1,1,1)
+!*DO,i,0,n*p-1,1   !draw beam elements for single fibre
+!    E,F_node_min+i,F_node_min+i+1
 !*ENDDO
 !WPCSYS,-1,0
-!
+
 !*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
 !    *SET,j,C_NODES(i,1,1)
 !    *IF,i,eq,1,then
