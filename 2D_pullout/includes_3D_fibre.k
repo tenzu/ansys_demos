@@ -1,20 +1,20 @@
 *KEYWORD
 *PARAMETER
-R err     0.28      
+R err     0.25      
 R sigc    40.0      
 R gb      30.0      
-R smax    0.07      
+R smax    0.01      
 R exp     1.6       
 *CONTROL_BULK_VISCOSITY
 $#      q1        q2      type     btype
   1.500000 6.0000E-2         1         0
 *CONTROL_CONTACT
 $#  slsfac    rwpnal    islchk    shlthk    penopt    thkchg     orien    enmass
-  0.100000     0.000         2         0         1         1         1         0
+  0.100000     0.000         2         0         1         0         1         0
 $#  usrstr    usrfrc     nsbcs    interm     xpene     ssthk      ecdt   tiedprj
          0         0        10         0  4.000000         0         0         0
 $#   sfric     dfric       edc       vfc        th     th_sf    pen_sf
-     0.000     0.000     0.000     0.000     0.000     0.000     0.000
+     0.030     0.020     0.000     0.000     0.000     0.000     0.000
 $#  ignore    frceng   skiprwg    outseg   spotstp   spotdel   spothin
          0         0         0         0         0         0     0.000
 $#    isym    nserod    rwgaps    rwgdth     rwksf      icov    swradf    ithoff
@@ -50,18 +50,18 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
 *CONTROL_TERMINATION
 $#  endtim    endcyc     dtmin    endeng    endmas
-  30000.00         0     0.000     0.000     0.000
+  10000.00         0     0.000     0.000     0.000
 *CONTROL_TIMESTEP
 $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
      0.000  0.900000         0     0.000     0.000         0         0         0
 $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
      0.000         0         0                         0.000
 *DATABASE_BINARY_D3PLOT
-10.000    
+100.00    
 *DATABASE_BINARY_D3THDT
-2.0000
+25.000
 *DATABASE_BINARY_D3DUMP
-         0
+5000000
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
@@ -89,30 +89,30 @@ $#    eta1      eta2      eta3      eta4      eta5      eta6      eta7      eta8
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 $#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-$*MAT_ADD_EROSION
-$$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-$         1     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
-$$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-$     0.000     0.000     0.000  0.200000     0.000     0.000     0.000     0.000
-$$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
-$         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
-$$#   lcfld             epsthin    engcrt    radcrt
-$         0         0     0.000     0.000     0.000
+*MAT_ADD_EROSION
+$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
+         1     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
+$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
+     0.000     0.000     1.710    0.0010     0.000     0.000     0.000     0.000
+$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
+         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
+$#   lcfld             epsthin    engcrt    radcrt
+         0         0     0.000     0.000     0.000
 *SECTION_BEAM
 $#   secid    elform      shrf   qr/irid       cst     scoor       nsm
          2         1     0.000         0         1     0.000     0.000
 $#     ts1       ts2       tt1       tt2     nsloc     ntloc
-  0.560000  0.560000     0.000     0.000     0.000     0.000
+  0.500000  0.500000     0.000     0.000     0.000     0.000
 *MAT_PLASTIC_KINEMATIC
 $#     mid        ro         e        pr      sigy      etan      beta
-         2 7.8000E-3 2.0000E+5  0.280000 1280.0000 81.000000  1.000000
+         2 7.8000E-3 2.0000E+5  0.280000  450.0000 81.000000  1.000000
 $#     src       srp        fs        vp
-     0.000     0.000     0.000     0.000
+     0.000     0.000     0.200     0.000
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          2     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     0.000  0.250000     0.000     0.000     0.000     0.000
+     0.000     0.000     210.0  0.250000     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
