@@ -1,0 +1,205 @@
+FINISH
+/CLEAR,NOSTART
+
+
+/NOPR
+KEYW,PR_SET,1
+KEYW,PR_STRUC,1
+KEYW,LSDYNA,1
+KEYW,PR_DYNA,1
+/CWD,'C:\Users\Cliff\Desktop\tmp\2D_pullout'
+
+PI = acos(-1)
+H = 75  !total depth of specimen (mm)
+r = 1	!spiral fibre coil radius (mm)
+r_outer = 4*r   !outer radius of outer cylindar
+s = 10 	!spiral fibre pitch (mm)
+n = 16	!division in single pitch (n must be multiple of 4)     !!!!temporarily fixed to 16, due to tmp(17,1,1)!!!!
+!D = n/4   !division in 90 degrees
+p = 2+1/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+!p = 1	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+K_num = p*n+1	!total node number in one spiral fibre
+L_num = K_num-1 !total element number in one spiral fibre
+R_beam = 0.25   !radius of fibre section (mm)
+D_margin = r/2    !spline offset distance
+
+/PREP7
+ET,1,SHELL163
+ET,2,LINK160
+R,1,R_beam,  !section area for fibre
+MP,DENS,1,0.0024    !material properties
+MP,EX,1,2e4
+MP,NUXY,1,0.2
+MP,DENS,2,0.0078
+MP,EX,2,2e5
+MP,NUXY,2,0.28
+*DIM,F_NODES,ARRAY,(n*p+1),1,1, , ,   !fibre nodes for 1D contact
+*DIM,C_NODES,ARRAY,(n*p+1),1,1, , ,   !concrete nodes for 1D contact
+
+
+*DIM,SPLINE,ARRAY,n*p+1,2,1, , ,
+*DIM,K_spline,ARRAY,n*p+1,1,1, , ,
+*DO,i,0,n*p,1   !keypoints for spline
+    *SET,SPLINE(i+1,1,1),s/n*i
+    *SET,SPLINE(i+1,2,1),r*sin(2*PI/s/p*SPLINE(i+1,1,1))
+    K,,SPLINE(i+1,1,1),SPLINE(i+1,2,1)
+    *GET,K_max,KP,0,NUM,MAX
+    *SET,K_spline(i+1,1,1),K_max
+*ENDDO
+FLST,3,K_max,3
+*DO,i,1,K_max,1
+	FITEM,3,i
+*ENDDO
+BSPLIN, ,P51X	!draw spline
+LGEN,2,1, , , ,D_margin, , ,0 
+LGEN,2,1, , , ,-D_margin, , ,0 
+LSTR,1,K_max+1
+LSTR,1,K_max+3
+LSTR,K_max,K_max+2
+LSTR,K_max,K_max+4
+AL,1,2,4,6  !create spline area, fixed line number!!!
+AL,1,3,5,7
+
+RECTNG,0,s*p,-r_outer/2,r_outer/2,  !draw concrete
+RECTNG,s*p,H,-r_outer/2,r_outer/2,
+RECTNG,0,s*p,r_outer/2,H/2,
+RECTNG,s*p,H,r_outer/2,H/2,
+AOVLAP,ALL
+
+AATT,1,1,1,0    !mesh attribute for concrete
+
+LSEL,S,LOC,X,0,
+LSEL,A,LOC,X,s*p,
+LSEL,A,LOC,X,H,
+LSEL,R,LOC,Y,-r_outer,r_outer,
+LESIZE,ALL,r/4, , , , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,X,0.25*s*p,0.75*s*p
+LESIZE,ALL, , ,n*p, , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
+LESIZE,ALL, , ,0.5*n*(H-s*p)/s, , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,Y,r_outer+0.25*(H-r_outer)/2,r_outer+0.75*(H-r_outer)/2
+LESIZE,ALL,2.0*s/n , , , , , , ,0,
+ALLSEL,ALL
+FLST,2,4,4,ORDE,4   !concatenate lines for area meshing, fix line numbers due to ANSYS bug!!!
+FITEM,2,6   
+FITEM,2,7
+FITEM,2,25
+FITEM,2,27
+LCCAT,P51X
+MSHKEY,1    !area meshing
+AMESH,ALL
+ASEL,S,LOC,Y,0.25*(H-r_outer)/2,0.75*(H-r_outer)/2
+ARSYM,Y,ALL, , , ,0,0
+ALLSEL,ALL
+NUMMRG,ALL, , , ,LOW   
+NUMCMP,ALL  
+
+
+*DO,i,0,n*p,1 !draw nodes for single fibre
+    NSEL,S,LOC,X,SPLINE(i+1,1,1)
+    NSEL,R,LOC,Y,SPLINE(i+1,2,1)
+    *GET,ijk,NODE,0,NUM,MIN
+    *SET,C_NODES(i,1,1),ijk
+    N,,SPLINE(i+1,1,1),SPLINE(i+1,2,1)
+	*GET,N_max,NODE,0,NUM,MAX	!N_max for temporarily storing maximum node number
+	*SET,F_NODES(i,1,1),N_max
+    ALLSEL,ALL
+*ENDDO
+
+
+
+
+
+
+
+
+
+
+
+
+
+!
+!
+!TYPE,2
+!MAT,2
+!REAL,1
+!ESYS,0
+!SECNUM,
+!*SET,F_node_min,F_NODES(1,1,1)
+!*DO,i,0,n*p-1,1   !draw beam elements for single fibre
+!    E,F_node_min+i,F_node_min+i+1
+!*ENDDO
+!WPCSYS,-1,0
+
+!*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
+!    *SET,j,C_NODES(i,1,1)
+!    *IF,i,eq,1,then
+!        NSEL,S,,,j
+!    *ELSE
+!        NSEL,A,,,j
+!    *ENDIF
+!*ENDDO
+!CM,C_NODES,NODE
+!CMSEL,A,C_NODES
+!ALLSEL,ALL
+!
+!*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
+!    *SET,j,F_NODES(i,1,1)
+!    *IF,i,eq,1,then
+!        NSEL,S,,,j
+!    *ELSE
+!        NSEL,A,,,j
+!    *ENDIF
+!*ENDDO
+!CM,F_NODES,NODE
+!CMSEL,A,F_NODES
+!ALLSEL,ALL
+!
+!CMSEL,S,C_NODES 	!concrete node set for 1D contact
+!D,ALL, , , , , ,UX, , , , ,
+!ALLSEL,ALL
+!CMSEL,S,F_NODES 	!fibre node set for 1D contact
+!D,ALL, , , , , ,UY, , , , ,
+!ALLSEL,ALL
+!
+!ESEL,S,MAT,,2   !node and beam element for loading
+!NSLE,R  
+!*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
+!NWPAVE,n_max
+!CSYS,4  
+!N, ,,,s*p,,,,
+!CSYS,0
+!*GET,nn_max,NODE,0,NUM,MAX	!nn_max for temporarily storing maximum node number
+!E,n_max,nn_max
+!NSEL,S, , ,nn_max 
+!CM,PULL,NODE
+!CMSEL,A,PULL
+!*DIM,TIME,ARRAY,2,1,1, , ,  
+!*SET,TIME(2,1,1) , 60000   
+!*DIM,DISP,ARRAY,2,1,1, , ,  
+!*SET,DISP(2,1,1) , 1.0
+!EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
+!ALLSEL,ALL  
+!
+!ESEL,S,MAT,,1   !merge concrete nodes
+!NSLE,R  
+!NUMMRG,NODE, , , ,LOW   
+!ALLSEL,ALL  
+!
+!ASEL,S,LOC,Z,-(H-s*p)  !fix end
+!NSLA,R,1
+!D,ALL, , , , , ,ALL, , , , ,   
+!ALLSEL,ALL  
+!
+!
+!FINISH
+!/SOL
+!TIME,3,
+!EDRST, ,0.1,
+!EDHTIME, ,0,
+!EDDUMP, ,0,
+!EDWRITE,LSDYNA,'tmp','k',' '
+!
