@@ -105,37 +105,13 @@ SECNUM,
     E,F_node_min+i,F_node_min+i+1
 *ENDDO
 
-!*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
-!    *SET,j,C_NODES(i,1,1)
-!    *IF,i,eq,1,then
-!        NSEL,S,,,j
-!    *ELSE
-!        NSEL,A,,,j
-!    *ENDIF
-!*ENDDO
-!CM,C_NODES,NODE
-!CMSEL,A,C_NODES
-!ALLSEL,ALL
-!
-!*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
-!    *SET,j,F_NODES(i,1,1)
-!    *IF,i,eq,1,then
-!        NSEL,S,,,j
-!    *ELSE
-!        NSEL,A,,,j
-!    *ENDIF
-!*ENDDO
-!CM,F_NODES,NODE
-!CMSEL,A,F_NODES
-!ALLSEL,ALL
-!
-!CMSEL,S,C_NODES 	!concrete node set for 1D contact
-!D,ALL, , , , , ,UX, , , , ,
-!ALLSEL,ALL
-!CMSEL,S,F_NODES 	!fibre node set for 1D contact
-!D,ALL, , , , , ,UY, , , , ,
-!ALLSEL,ALL
-!
+CMSEL,S,CMC_NODES 	!concrete node set for 1D contact
+D,ALL, , , , , ,UX, , , , ,
+ALLSEL,ALL
+CMSEL,S,CMF_NODES 	!fibre node set for 1D contact
+D,ALL, , , , , ,UY, , , , ,
+ALLSEL,ALL
+
 !ESEL,S,MAT,,2   !node and beam element for loading
 !NSLE,R  
 !*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
