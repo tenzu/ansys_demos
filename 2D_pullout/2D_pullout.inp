@@ -1,7 +1,6 @@
 FINISH
 /CLEAR,NOSTART
 
-
 /NOPR
 KEYW,PR_SET,1
 KEYW,PR_STRUC,1
@@ -10,7 +9,6 @@ KEYW,PR_DYNA,1
 !/CWD,'C:\Users\Cliff\Desktop\tmp\2D_pullout'
 
 PI = acos(-1)
-!H = 75  !total depth of specimen (mm)
 r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n must be multiple of 4)
@@ -18,20 +16,21 @@ p = 2+1/n	!spital fibre total pitch number (must be an integer plus integral mul
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
-!r_inner= r+r_beam+r/(n/4)   !radius of inner cylindar
 r_inner= 2*r+r_beam   !radius of inner cylindar
-!H = 1.25*s*p  !total depth of specimen (mm)
 H = 75  !total depth of specimen (mm)
 
 /PREP7
 ET,1,PLANE162
-R,1,r_beam,  !section radius of fibre
-MP,DENS,1,0.0024    !material properties
-MP,EX,1,2e4
-MP,NUXY,1,0.2
-MP,DENS,2,0.0078
-MP,EX,2,2e5
-MP,NUXY,2,0.28
+KEYOPT,1,3,2
+KEYOPT,1,5,0
+MPTEMP,,,,,,,   !fibre material model (number 1)
+MP,DENS,1,7800  
+MP,EX,1,2e11
+MP,NUXY,1,0.3
+MPTEMP,,,,,,,   !disk material model (number 2)
+MP,DENS,2,2200  
+MP,EX,2,3e10
+MP,NUXY,2,0.2
 *DIM,F_NODES,ARRAY,(n*p+1),1,1, , ,   !fibre nodes for 1D contact
 *DIM,C_NODES,ARRAY,(n*p+1),1,1, , ,   !concrete nodes for 1D contact
 
@@ -54,136 +53,108 @@ LGEN,2,ALL, , , ,-2*r_beam, , ,0
 LSTR,1,K_max+1
 LSTR,K_max,K_max+2
 AL,1,2,3,4  !create spline area, fixed line number!!!
-
+ARSYM,X,ALL, , , ,0,0  
+ARSYM,X,2, , , ,0,0 !!!fixed area number!!!
+ARSYM,Y,2, , , ,0,1 !!!fixed area number!!!
 RECTNG,0,s*p,-r_inner,r_inner,  !draw concrete
 RECTNG,s*p,H,-r_inner,r_inner,
 RECTNG,0,s*p,r_inner,H/2,
 RECTNG,s*p,H,r_inner,H/2,
-AOVLAP,ALL
+RECTNG,0,s*p,-r_inner,-H/2,
+RECTNG,s*p,H,-r_inner,-H/2,
+ASBA,4,3    !!!fixed area numbers!!!
+AGLUE,1,2   !!!fixed area numbers!!!
+ASEL,U, , ,1
+ASEL,U, , ,3
+AGLUE,ALL
+!AGLUE,5,6,7,8,9,10,11 !!!fixed area numbers!!!
 
 LSEL,S,LOC,X,0, !mesh sizes for lines
 LSEL,A,LOC,X,s*p,
+LSEL,A,LOC,X,-s*p,
 LSEL,A,LOC,X,H,
 LSEL,R,LOC,Y,-r_inner,r_inner,
 LESIZE,ALL,r/8.00, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,0.25*s*p,0.75*s*p
+LSEL,A,LOC,X,-0.25*s*p,-0.75*s*p
 LESIZE,ALL, , ,2.00*n*p, , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
 LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r_inner+0.75*(H-r_inner)/2
+LSEL,A,LOC,Y,-r_inner-0.25*(H-r_inner)/2,-r_inner-0.75*(H-r_inner)/2
 LESIZE,ALL,1.00*s/n , , , , , , ,0,
 ALLSEL,ALL
 FLST,2,3,4,ORDE,3   
-FITEM,2,4   
-FITEM,2,22  
-FITEM,2,24  
+FITEM,2,7   
+FITEM,2,14 
+FITEM,2,48  
 LCCAT,P51X  
 
 AATT,2,1,1,0    !mesh attribute for fibre
-ASEL,S, , ,1    !F_NODES
+ASEL,S, , ,1    !!!fixed area number!!!
+ASEL,A, , ,3    !!!fixed area number!!!
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
-AATT,1,1,1,0    !mesh attribute for concrete
-ASEL,U, , ,1
+AATT,2,1,1,0    !mesh attribute for concrete
+ASEL,U, , ,1    !!!fixed area number!!!
+ASEL,U, , ,3
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
 
-ASEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r+inner+0.75*(H-r_inner)/2
-ARSYM,Y,ALL, , , ,0,0
-ALLSEL,ALL
-NUMMRG,ALL, , , ,LOW   
-NUMCMP,ALL  
+!!ASEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r+inner+0.75*(H-r_inner)/2
+!!ARSYM,Y,ALL, , , ,0,0
+!!ALLSEL,ALL
+!!ESEL,S,MAT, ,2
+!!NUMMRG,ALL, , , ,LOW   
+!!NUMCMP,ALL  
+!!ALLSEL,ALL
+!!ESEL,S,MAT, ,2
+!!NUMMRG,ALL, , , ,LOW   
+!!NUMCMP,ALL  
+!!ALLSEL,ALL
 
-ASEL,S, , ,1    !F_NODES
-NSLA,S,ALL    !!!fixed area number!!!
+ESEL,S,MAT, ,1  !F_NODES for contact
+NSLE,S
+NSEL,U,LOC,X,-s*p,-0.001
 CM,F_NODES,NODE 
 CMSEL,A,F_NODES 
+D,ALL, , , , , ,UX, , , , ,
 ALLSEL,ALL
-ASEL,S, , ,4    !C_NODES
-ASEL,A, , ,5
-ASEL,A, , ,8
-NSLA,S,ALL    !!!fixed area number!!!
+ESEL,S,MAT, ,2  !C_NODES for contact
+NSLE,S
+NSEL,U,LOC,X,s*p+0.001,H 
+NSEL,U,LOC,Y,r_inner,H/2 
+NSEL,U,LOC,Y,-r_inner,-H/2 
 CM,C_NODES,NODE 
 CMSEL,A,C_NODES 
+D,ALL, , , , , ,UY, , , , ,
 ALLSEL,ALL
 
-!*DO,i,0,n*p,1   !C_NODES list
-!    *SET,C_NODES(i+1,1,1),NODE(s/n*i,r*sin(2*PI/s/p*s/n*i),0)
-!*ENDDO
-!*DO,i,0,n*p,1
-!    *IF,i,eq,0,then
-!        NSEL,S, , ,C_NODES(i+1,1,1)
-!    *ELSE
-!        NSEL,A, , ,C_NODES(i+1,1,1)
-!    *ENDIF
-!*ENDDO
-!CM,CMC_NODES,NODE   !concrete node component for 1D contact
-!ALLSEL,ALL
-!
-!*DO,i,0,n*p,1 !draw nodes for pullout fibre
-!    *GET,x_tmp,NODE,C_NODES(i+1,1,1),LOC,X,,
-!    *GET,y_tmp,NODE,C_NODES(i+1,1,1),LOC,Y,,
-!    N,,x_tmp,y_tmp
-!    *GET,N_max,NODE,0,NUM,MAX	!N_max for temporarily storing maximum node number
-!	*SET,F_NODES(i+1,1,1),N_max
-!*ENDDO
-!*DO,i,0,n*p,1
-!    *IF,i,eq,0,then
-!        NSEL,S, , ,F_NODES(i+1,1,1)
-!    *ELSE
-!        NSEL,A, , ,F_NODES(i+1,1,1)
-!    *ENDIF
-!*ENDDO
-!CM,CMF_NODES,NODE   !fibre node component for 1D contact
-!ALLSEL,ALL
-!
-!TYPE,2
-!MAT,2
-!REAL,1
-!SECNUM,
-!*SET,F_node_min,F_NODES(1,1,1)
-!*DO,i,0,n*p-1,1   !draw beam elements for single fibre
-!    E,F_node_min+i,F_node_min+i+1
-!*ENDDO
-!
-!CMSEL,S,CMC_NODES 	!concrete node set for 1D contact
-!D,ALL, , , , , ,UX, , , , ,
-!ALLSEL,ALL
-!CMSEL,S,CMF_NODES 	!fibre node set for 1D contact
-!D,ALL, , , , , ,UY, , , , ,
-!ALLSEL,ALL
-!
-!ESEL,S,MAT,,2   !node and beam element for loading
-!NSLE,R  
-!*GET,n_min,NODE,0,NUM,MIN	!n_max for temporarily storing maximum node number
-!N, ,-s*p,,,,,,
-!*GET,n_max,NODE,0,NUM,MAX	!nn_max for temporarily storing maximum node number
-!E,n_min,n_max
-!NSEL,S, , ,n_max 
-!CM,PULL,NODE
-!CMSEL,A,PULL
-!*DIM,TIME,ARRAY,2,1,1, , ,  
-!*SET,TIME(2,1,1) , 60000   
-!*DIM,DISP,ARRAY,2,1,1, , ,  
-!*SET,DISP(2,1,1) , 70.0
-!EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
-!ALLSEL,ALL  
-!
-!LSEL,S,LOC,X,H  !fix end
-!NSLL,R,1
-!D,ALL, , , , , ,ALL, , , , ,   
-!ALLSEL,ALL  
-!
-!
-!FINISH
-!/SOL
-!TIME,3,
-!EDRST, ,0.1,
-!EDHTIME, ,0,
-!EDDUMP, ,0,
-!EDWRITE,LSDYNA,'tmp','k',' '
+NSEL,S,LOC,X,-s*p   !PULL for pull
+CM,PULL,NODE
+CMSEL,A,PULL
+*DIM,TIME,ARRAY,2,1,1, , ,  
+*SET,TIME(2,1,1) , 60000   
+*DIM,DISP,ARRAY,2,1,1, , ,  
+*SET,DISP(2,1,1) , -70.0
+EDLOAD,ADD,UY,0,PULL,TIME,DISP, 0, , , , ,  
+ALLSEL,ALL  
+
+NSEL,S,LOC,X,H  !fix end
+CM,FIX,NODE
+CMSEL,A,FIX
+D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL  
+
+FINISH
+/SOL
+TIME,3,
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0,
+EDWRITE,LSDYNA,'tmp','k',' '
