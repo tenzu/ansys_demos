@@ -62,12 +62,12 @@ RECTNG,0,s*p,r_inner,H/2,
 RECTNG,s*p,H,r_inner,H/2,
 RECTNG,0,s*p,-r_inner,-H/2,
 RECTNG,s*p,H,-r_inner,-H/2,
-ASBA,4,3    !!!fixed area numbers!!!
+ASBA,4,3    !!!fixed area numbers!!!    !areas for long fibre
 AGLUE,1,2   !!!fixed area numbers!!!
-ASEL,U, , ,1
-ASEL,U, , ,3
+ASEL,U, , ,1    !!!fixed area number!!! !areas for concrete
+ASEL,U, , ,3    !!!fixed area number!!!
 AGLUE,ALL
-!AGLUE,5,6,7,8,9,10,11 !!!fixed area numbers!!!
+ALLSEL,ALL
 
 LSEL,S,LOC,X,0, !mesh sizes for lines
 LSEL,A,LOC,X,s*p,
@@ -87,13 +87,8 @@ LSEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r_inner+0.75*(H-r_inner)/2
 LSEL,A,LOC,Y,-r_inner-0.25*(H-r_inner)/2,-r_inner-0.75*(H-r_inner)/2
 LESIZE,ALL,1.00*s/n , , , , , , ,0,
 ALLSEL,ALL
-FLST,2,3,4,ORDE,3   
-FITEM,2,7   
-FITEM,2,14 
-FITEM,2,48  
-LCCAT,P51X  
 
-AATT,2,1,1,0    !mesh attribute for fibre
+AATT,1,1,1,0    !mesh attribute for fibre
 ASEL,S, , ,1    !!!fixed area number!!!
 ASEL,A, , ,3    !!!fixed area number!!!
 MSHKEY,1    !area meshing
@@ -102,38 +97,17 @@ ALLSEL,ALL
 AATT,2,1,1,0    !mesh attribute for concrete
 ASEL,U, , ,1    !!!fixed area number!!!
 ASEL,U, , ,3
+FLST,2,3,4,ORDE,3   
+FITEM,2,7   
+FITEM,2,14 
+FITEM,2,48  
+LCCAT,P51X  
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
 
-!!ASEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r+inner+0.75*(H-r_inner)/2
-!!ARSYM,Y,ALL, , , ,0,0
-!!ALLSEL,ALL
-!!ESEL,S,MAT, ,2
-!!NUMMRG,ALL, , , ,LOW   
-!!NUMCMP,ALL  
-!!ALLSEL,ALL
-!!ESEL,S,MAT, ,2
-!!NUMMRG,ALL, , , ,LOW   
-!!NUMCMP,ALL  
-!!ALLSEL,ALL
-
-ESEL,S,MAT, ,1  !F_NODES for contact
-NSLE,S
-NSEL,U,LOC,X,-s*p,-0.001
-CM,F_NODES,NODE 
-CMSEL,A,F_NODES 
-D,ALL, , , , , ,UX, , , , ,
-ALLSEL,ALL
-ESEL,S,MAT, ,2  !C_NODES for contact
-NSLE,S
-NSEL,U,LOC,X,s*p+0.001,H 
-NSEL,U,LOC,Y,r_inner,H/2 
-NSEL,U,LOC,Y,-r_inner,-H/2 
-CM,C_NODES,NODE 
-CMSEL,A,C_NODES 
-D,ALL, , , , , ,UY, , , , ,
-ALLSEL,ALL
+EDPART,CREATE   !create all parts
+EDCGEN,ESTS,2,1,0.2,0.1,0,0,0.2,0,1,0, ,0,10000000,0,0    !define contact
 
 NSEL,S,LOC,X,-s*p   !PULL for pull
 CM,PULL,NODE

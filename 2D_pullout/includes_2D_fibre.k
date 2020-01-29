@@ -15,23 +15,13 @@ $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
      0.000  0.900000         0     0.000     0.000         0         0         0
 $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
      0.000         0         0                         0.000
-*DATABASE_ELOUT
-$#      dt    binary      lcur     ioopt   option1   option2   option3   option4
- 1.0000E-3         1         0         1         0         0         0         0
-*DATABASE_NODOUT
-$#      dt    binary      lcur     ioopt   option1   option2   option3   option4
- 1.0000E-3         1         0         1         0         0         0         0
-*DATABASE_BINARY_D3DUMP
-$#    cycl      lcdt      beam     npltc    psetid
- 1.1883E+6         0         0         0         0
+$$$*DATABASE_ELOUT
+$$$$#      dt    binary      lcur     ioopt   option1   option2   option3   option4
+$$$ 1.0000E-3         1         0         1         0         0         0         0
+$$$*DATABASE_NODOUT
+$$$$#      dt    binary      lcur     ioopt   option1   option2   option3   option4
+$$$ 1.0000E-3         1         0         1         0         0         0         0
 *DATABASE_BINARY_D3PLOT
-$#      dt      lcdt      beam     npltc    psetid
- 1.0000E-2         0         0         0         0
-$#   ioopt
-         0
-*DATABASE_BINARY_D3THDT
-$#      dt      lcdt      beam     npltc    psetid
- 1.1000E-5         0         0         0         0*DATABASE_BINARY_D3PLOT
 100.00    
 *DATABASE_BINARY_D3THDT
 25.000
@@ -57,11 +47,6 @@ $#      t1        t2        t3        t4      nloc     marea      idof    edgset
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 $                             MATERIAL DEFINITIONS                             $
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-*PART
-$# title
-Part          1 for Mat         1 and Elem Type         1
-$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid
-         1         1         1         0         0         0         0         0
 *MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE
 fibre
 $#     mid        ro         e        pr      sigy      etan      fail      tdel
@@ -72,11 +57,6 @@ $#    eps1      eps2      eps3      eps4      eps5      eps6      eps7      eps8
      0.000 1.4000E-2 1.7000E-2 2.7000E-2 4.3000E-2 6.1000E-2 8.5000E-2  0.105000
 $#     es1       es2       es3       es4       es5       es6       es7       es8
  535.00000 540.00000 560.00000 595.00000 625.00000 640.00000 655.00000 660.00000
-*PART
-$# title
-Part          2 for Mat         2 and Elem Type         1
-$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid
-         2         1         2         0         0         0         0         0
 *MAT_CONCRETE_DAMAGE_REL3
 $#     mid        ro        pr
          2 2.2000E-3  0.180000
