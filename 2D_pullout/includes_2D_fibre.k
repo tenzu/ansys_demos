@@ -57,19 +57,9 @@ $#    eps1      eps2      eps3      eps4      eps5      eps6      eps7      eps8
      0.000 1.4000E-2 1.7000E-2 2.7000E-2 4.3000E-2 6.1000E-2 8.5000E-2  0.105000
 $#     es1       es2       es3       es4       es5       es6       es7       es8
  535.00000 540.00000 560.00000 595.00000 625.00000 640.00000 655.00000 660.00000
-*MAT_PIECEWISE_LINEAR_PLASTICITY_TITLE
-fibre
-$#     mid        ro         e        pr      sigy      etan      fail      tdel
-         2 7.8000E-3 2.0000E+5  0.280000 1300.0000     0.000  0.200000     0.000
-$#       c         p      lcss      lcsr        vp
-     0.000     0.000         0         0     0.000
-$#    eps1      eps2      eps3      eps4      eps5      eps6      eps7      eps8
-     0.000 1.4000E-2 1.7000E-2 2.7000E-2 4.3000E-2 6.1000E-2 8.5000E-2  0.105000
-$#     es1       es2       es3       es4       es5       es6       es7       es8
- 535.00000 540.00000 560.00000 595.00000 625.00000 640.00000 655.00000 660.00000
 *MAT_CONCRETE_DAMAGE_REL3
 $#     mid        ro        pr
-         3 2.2000E-3  0.180000
+         2 2.2000E-3  0.180000
 $#      ft        a0        a1        a2        b1     omega       a1f
   3.000000-35.000000     0.000     0.000     0.000     0.000     0.000
 $# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
@@ -84,7 +74,7 @@ $#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
      0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 *MAT_CONCRETE_DAMAGE_REL3
 $#     mid        ro        pr
-         4 2.2000E-3  0.180000
+         3 2.2000E-3  0.180000
 $#      ft        a0        a1        a2        b1     omega       a1f
   3.000000-35.000000     0.000     0.000     0.000     0.000     0.000
 $# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
@@ -108,9 +98,9 @@ $#   lcfld             epsthin    engcrt    radcrt
          0         0     0.000     0.000     0.000
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-         2     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
+         2     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     210.0  0.250000     0.000     0.000     0.000     0.000
+     0.000     0.000     1.310    0.0100     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
@@ -118,15 +108,6 @@ $#   lcfld             epsthin    engcrt    radcrt
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          3     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
-$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     1.710    0.0010     0.000     0.000     0.000     0.000
-$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
-         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
-$#   lcfld             epsthin    engcrt    radcrt
-         0         0     0.000     0.000     0.000
-*MAT_ADD_EROSION
-$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-         4     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
      0.000     0.000     1.710    0.0010     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd

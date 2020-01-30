@@ -28,14 +28,18 @@ MPTEMP,,,,,,,   !fibre material model (number 1)
 MP,DENS,1,7800  
 MP,EX,1,2e11
 MP,NUXY,1,0.3
-MPTEMP,,,,,,,   !bonding material model (number 2)
-MP,DENS,2,7800
+MPTEMP,,,,,,,   !fibre material model (number 2)
+MP,DENS,2,7800  
 MP,EX,2,2e11
 MP,NUXY,2,0.3
-MPTEMP,,,,,,,   !concrete material model (number 3)
-MP,DENS,3,2200
+MPTEMP,,,,,,,   !disk material model (number 3)
+MP,DENS,3,2200  
 MP,EX,3,3e10
 MP,NUXY,3,0.2
+MPTEMP,,,,,,,   !disk material model (number 4)
+MP,DENS,4,2200  
+MP,EX,4,3e10
+MP,NUXY,4,0.2
 
 *DIM,SPLINE,ARRAY,n*p+1,2,1, , ,
 *DIM,K_spline,ARRAY,n*p+1,1,1, , ,
@@ -69,8 +73,11 @@ RECTNG,0,s*p,r_inner,H/2,
 RECTNG,s*p,H,r_inner,H/2,
 RECTNG,0,s*p,-r_inner,-H/2,
 RECTNG,s*p,H,-r_inner,-H/2,
-AOVLAP,ALL
-NUMCMP,ALL
+ASBA,4,1    !!!fixed area numbers!!!    !areas for long fibre
+AGLUE,2,3   !!!fixed area numbers!!!
+AGLUE,10,6  !!!fixed area numbers, fixed sequence!!!
+AGLUE,11,8  !!!fixed area numbers, fixed sequence!!!
+AGLUE,6,7,5,9,8 !!!fixed area numbers, fixed sequence!!!
 
 LSEL,S,LOC,X,0, !mesh sizes for lines
 LSEL,A,LOC,X,s*p,
@@ -91,35 +98,33 @@ LSEL,A,LOC,Y,-r_inner-0.25*(H-r_inner)/2,-r_inner-0.75*(H-r_inner)/2
 LESIZE,ALL,1.00*s/n , , , , , , ,0,
 ALLSEL,ALL
 
-AATT,1,1,1,0    !mesh attribute for fibre
-ASEL,S, , ,1    !!!fixed area number!!!
-ASEL,A, , ,6    !!!fixed area number!!!
-MSHKEY,1    !area meshing
-AMESH,ALL
-ALLSEL,ALL
-AATT,2,1,1,0    !mesh attribute for bond matireal
+AATT,1,1,1,0    !mesh attribute for fibre contact
 ASEL,S, , ,2    !!!fixed area number!!!
-ASEL,A, , ,4    !!!fixed area number!!!
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
-AATT,3,1,1,0    !mesh attribute for concrete
+AATT,2,1,1,0    !mesh attribute for fibre
+ASEL,S, , ,1    !!!fixed area number!!!
+MSHKEY,1    !area meshing
+AMESH,ALL
+ALLSEL,ALL
+AATT,3,1,1,0    !mesh attribute for concrete contact
+ASEL,S, , ,3    !!!fixed area number!!!
+ASEL,A, , ,4
+MSHKEY,1    !area meshing
+AMESH,ALL
+ALLSEL,ALL
+AATT,4,1,1,0    !mesh attribute for concrete
 ASEL,U, , ,1    !!!fixed area number!!!
 ASEL,U, , ,2    !!!fixed area number!!!
+ASEL,U, , ,3    !!!fixed area number!!!
 ASEL,U, , ,4    !!!fixed area number!!!
-ASEL,U, , ,6    !!!fixed area number!!!
-FLST,2,5,4,ORDE,5   
-FITEM,2,6   !!!fixed line number!!!
-FITEM,2,14  !!!fixed line number!!!
-FITEM,2,16  !!!fixed line number!!!
-FITEM,2,18  !!!fixed line number!!!
-FITEM,2,20  !!!fixed line number!!!
-LCCAT,P51X  
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
 
 EDPART,CREATE   !create all parts
+EDCGEN,ESTS,3,1,0.2,0.1,0,0,0.2,0,1,0, ,0,10000000,0,0    !define contact
 
 NSEL,S,LOC,X,-s*p   !PULL for pull
 CM,PULL,NODE
