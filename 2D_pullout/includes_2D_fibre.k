@@ -61,7 +61,7 @@ $#     es1       es2       es3       es4       es5       es6       es7       es8
 $#     mid        ro        pr
          2 2.2000E-3  0.180000
 $#      ft        a0        a1        a2        b1     omega       a1f
-  3.000000-35.000000     0.000     0.000     0.000     0.000     0.000
+ 35.000000-35.000000     0.000     0.000     0.000     0.000     0.000
 $# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
      0.000     0.000     0.000  0.393700 145.00000      2222     0.000     0.000
 $# lambda1   lambda2   lambda3   lambda4   lambda5   lambda6   lambda7   lambda8
@@ -100,7 +100,7 @@ $#   lcfld             epsthin    engcrt    radcrt
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          2     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     1.310    0.0100     0.000     0.000     0.000     0.000
+     0.000     0.000      40.0    0.2000     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
