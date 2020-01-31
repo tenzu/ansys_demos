@@ -12,13 +12,14 @@ PI = acos(-1)
 r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n must be multiple of 4)
-p = 2+1/n	!spital fibre total pitch number (must be an integer plus integral multiple of 1/n)
+p = 1+8/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
 r_margin = r/8.00    !gap between fibre and concrete
-r_inner= 3*r+r_beam   !radius of inner cylindar
-H = 75  !total depth of specimen (mm)
+r_inner= 3*r+r_margin+r_beam   !radius of inner cylindar
+!H = 75  !total depth of specimen (mm)
+H = 2.00*s*p  !total depth of specimen (mm)
 
 /PREP7
 ET,1,PLANE162
@@ -40,8 +41,8 @@ MP,NUXY,3,0.2
 *DIM,SPLINE,ARRAY,n*p+1,2,1, , ,
 *DIM,K_spline,ARRAY,n*p+1,1,1, , ,
 *DO,i,0,n*p,1   !keypoints for spline
-    *SET,SPLINE(i+1,1,1),s/n*i
-    *SET,SPLINE(i+1,2,1),r*sin(2*PI/s/p*SPLINE(i+1,1,1))
+    *SET,SPLINE(i+1,1,1),(s/n)*i
+    *SET,SPLINE(i+1,2,1),r*sin(2*PI*i/n)
     K,,SPLINE(i+1,1,1),SPLINE(i+1,2,1)
     *GET,K_max,KP,0,NUM,MAX
     *SET,K_spline(i+1,1,1),K_max
@@ -81,7 +82,8 @@ LESIZE,ALL,r/8.00, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,0.25*s*p,0.75*s*p
 LSEL,A,LOC,X,-0.25*s*p,-0.75*s*p
-LESIZE,ALL, , ,2.00*n*p, , , , ,0,
+!LESIZE,ALL, , ,2.00*n*p, , , , ,0,
+LESIZE,ALL,r/8.00, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
 LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
