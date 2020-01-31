@@ -16,7 +16,7 @@ p = 1+8/n	!spital fibre total pitch number (must be an integer plus integral mul
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
-r_margin = r/8.00    !gap between fibre and concrete
+r_margin = r_beam/2.00    !gap between fibre and concrete
 r_inner= 3*r+r_margin+r_beam   !radius of inner cylindar
 !H = 75  !total depth of specimen (mm)
 H = 2.00*s*p  !total depth of specimen (mm)
@@ -78,12 +78,11 @@ LSEL,A,LOC,X,s*p,
 LSEL,A,LOC,X,-s*p,
 LSEL,A,LOC,X,H,
 LSEL,R,LOC,Y,-r_inner,r_inner,
-LESIZE,ALL,r/8.00, , , , , , ,0,
+LESIZE,ALL,r_margin, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,0.25*s*p,0.75*s*p
 LSEL,A,LOC,X,-0.25*s*p,-0.75*s*p
-!LESIZE,ALL, , ,2.00*n*p, , , , ,0,
-LESIZE,ALL,r/8.00, , , , , , ,0,
+LESIZE,ALL,2.00*r_margin, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
 LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
