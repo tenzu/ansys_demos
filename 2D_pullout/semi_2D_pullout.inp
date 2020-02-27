@@ -99,13 +99,13 @@ ALLSEL,ALL
 VATT,1,1,1,0    !mesh attribute for fibre
 VSEL,S, , ,1    !!!fixed area number!!!
 VSEL,A, , ,6    !!!fixed area number!!!
-!MSHKEY,1    !area meshing
+!!!MSHKEY,1    !area meshing
 VSWEEP,ALL
 ALLSEL,ALL
 VATT,2,1,1,0    !mesh attribute for bond matireal
 VSEL,S, , ,2    !!!fixed area number!!!
 VSEL,A, , ,4    !!!fixed area number!!!
-!MSHKEY,1    !area meshing
+!!!MSHKEY,1    !area meshing
 VSWEEP,ALL
 ALLSEL,ALL
 VATT,3,1,1,0    !mesh attribute for concrete
@@ -113,28 +113,27 @@ VSEL,U, , ,1    !!!fixed area number!!!
 VSEL,U, , ,2    !!!fixed area number!!!
 VSEL,U, , ,4    !!!fixed area number!!!
 VSEL,U, , ,6    !!!fixed area number!!!
-!FLST,2,5,4,ORDE,5   
-!FITEM,2,6   !!!fixed line number!!!
-!FITEM,2,14  !!!fixed line number!!!
-!FITEM,2,16  !!!fixed line number!!!
-!FITEM,2,18  !!!fixed line number!!!
-!FITEM,2,20  !!!fixed line number!!!
-!LCCAT,P51X  
-!MSHKEY,1    !area meshing
+!!!FLST,2,5,4,ORDE,5   
+!!!FITEM,2,6   !!!fixed line number!!!
+!!!FITEM,2,14  !!!fixed line number!!!
+!!!FITEM,2,16  !!!fixed line number!!!
+!!!FITEM,2,18  !!!fixed line number!!!
+!!!FITEM,2,20  !!!fixed line number!!!
+!!!LCCAT,P51X  
+!!!MSHKEY,1    !area meshing
 VSWEEP,ALL
 ALLSEL,ALL
 
 EDPART,CREATE   !create all parts
 !!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
 !!!EDCGEN,TSTS,2,3,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
-!EDCGEN,ASTS,1,2,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
-!EDCGEN,ASTS,2,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
-!EDCGEN,ASTS,1,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
+!!!EDCGEN,ASTS,1,2,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
+!!!EDCGEN,ASTS,2,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
+EDCGEN,ASTS,1,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0   
 
 NSEL,S,LOC,X,-s*p   !PULL for pull
 CM,PULL,NODE
 CMSEL,A,PULL
-!D,ALL, , , , , ,UX, , , , ,
 *DIM,TIME,ARRAY,2,1,1, , ,  
 *SET,TIME(2,1,1) , 60000   
 *DIM,DISP,ARRAY,2,1,1, , ,  
@@ -147,6 +146,14 @@ NSEL,S,LOC,X,H  !fix end
 CM,FIX,NODE
 CMSEL,A,FIX
 D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL  
+
+NSLE,S  !Z DOF fixed
+NSEL,R,LOC,Z,0
+!!!NSEL,A,LOC,Z,r_margin
+CM,ZZ,NODE
+CMSEL,A,ZZ
+D,ALL, , , , , ,UZ, , , , ,
 ALLSEL,ALL  
 
 FINISH
