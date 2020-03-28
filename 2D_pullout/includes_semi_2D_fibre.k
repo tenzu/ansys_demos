@@ -23,7 +23,7 @@ $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
        0.0         0         0                           0.0
 *DATABASE_BINARY_D3DUMP
 $#    cycl      lcdt      beam     npltc    psetid      
-   1000000         0         0         0         0
+   4000000         0         0         0         0
 $$$*DATABASE_ELOUT
 $$$$#      dt    binary      lcur     ioopt   option1   option2   option3   option4
 $$$ 1.0000E-3         1         0         1         0         0         0         0
@@ -35,7 +35,7 @@ $#      dt      lcdt      beam     npltc    psetid
       10.0         0         0         0         0
 *DATABASE_BINARY_D3THDT
 $#      dt      lcdt      beam     npltc    psetid      
-       5.0         0         0         0         0
+      50.0         0         0         0         0
 *DATABASE_EXTENT_BINARY
 $#   neiph     neips    maxint    strflg    sigflg    epsflg    rltflg    engflg
          6         6         3         1         1         1         1         1
@@ -47,7 +47,7 @@ $#    dtdt    resplt     neipb     quadr     cubic
          0         0         0         0         0
 *CONTACT_AUTOMATIC_SURFACE_TO_SURFACE_ID
 $#     cid                                                                 title
-         1
+         2
 $#    ssid      msid     sstyp     mstyp    sboxid    mboxid       spr       mpr
          1         2         3         3         0         0         0         0
 $#      fs        fd        dc        vc       vdc    penchk        bt        dt
@@ -194,7 +194,7 @@ $#    lcid      sidr       sfa       sfo      offa      offo    dattyp     lcint
          1         0       1.0       1.0       0.0       0.0         0         0
 $#                a1                  o1  
                  0.0                 0.0
-             60000.0             -1.0E+0
+             60000.0             -7.5E+1
 *DEFINE_CURVE
 $#    lcid      sidr       sfa       sfo      offa      offo    dattyp     lcint
       1111         0       1.0       1.0       0.0       0.0         0         0
