@@ -1,0 +1,70 @@
+L=0.5   ! FRP板边长
+t=0.005 ! FRP板厚
+mesh_size=0.025 ! 网格大小
+
+
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+/VIEW,1,1,1,1   ! 斜45度视角
+/ANG,1
+/REP,FAST
+
+
+/PREP7  
+ET,1,SHELL181   
+MPTEMP,,,,,,,,  
+MPTEMP,1,0  
+MPDATA,EX,1,,7890E6     ! 杨氏模量
+MPDATA,PRXY,1,,0.2      ! 泊松比
+sect,1,shell,,
+secdata, 0.005,1,0.0,3  
+secoffset,MID
+seccontrol,,,, , , ,
+
+RECTNG,0,0.25,0,0.25,   ! 1/4模型
+ARSYM,X,ALL, , , ,0,0   ! 两次镜像
+ARSYM,Y,ALL, , , ,0,0
+AGLUE,ALL
+LESIZE,ALL,mesh_size, , , ,1, , ,   ! 手动指定网格大小
+AMESH,ALL
+
+
+KSEL,S,LOC,X,L/2
+KSEL,R,LOC,Y,L/2
+DK,ALL, , , ,0,ALL, , , , , ,
+ALLSEL,ALL
+KSEL,S,LOC,X,-L/2
+KSEL,R,LOC,Y,L/2
+DK,ALL, , , ,0,ALL, , , , , ,
+ALLSEL,ALL
+KSEL,S,LOC,X,L/2
+KSEL,R,LOC,Y,-L/2
+DK,ALL, , , ,0,ALL, , , , , ,
+ALLSEL,ALL
+KSEL,S,LOC,X,-L/2
+KSEL,R,LOC,Y,-L/2
+DK,ALL, , , ,0,ALL, , , , , ,
+ALLSEL,ALL
+
+
+NSEL,S,LOC,X,0      ! 以下5行定义集中力
+NSEL,R,LOC,Y,0
+F,ALL,FZ,1.5E3     ! 集中力1.5 kN
+ALLSEL,ALL
+
+
+SFA,ALL,1,PRES,0.75E3   ! 定义压力,0.75 kPa
+ALLSEL,ALL
+FINISH
+
+
+/SOL    ! 求解
+/STATUS,SOLU
+SOLVE   
+FINISH
+
+/POST1  
+/DSCALE,ALL,1.0 
+/EFACET,1     
+PLNSOL, S,X, 0,1.0

@@ -1,0 +1,57 @@
+L=500   ! FRP板边长
+t=5 ! FRP板厚
+mesh_size=10 ! 网格大小
+
+
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+KEYW,LSDYNA,1
+KEYW,PR_DYNA,1
+
+
+/PREP7  
+ET,1,SHELL163   
+MP,DENS,1,2.5E-2
+MP,EX,1,0.7890E5
+MP,NUXY,1,0.2
+*SET,_RC_SET,1, 
+R,1 
+RMODIF,1,1, , ,t, , , , 
+
+
+RECTNG,0,L/2,0,L/2,   ! 1/4模型
+ARSYM,X,ALL, , , ,0,0   ! 两次镜像
+ARSYM,Y,ALL, , , ,0,0
+AGLUE,ALL
+LESIZE,ALL,mesh_size, , , ,1, , ,   ! 手动指定网格大小
+AMESH,ALL
+
+
+NSEL,S,LOC,X,L/2
+NSEL,A,LOC,X,-L/2
+NSEL,U,LOC,Y,-(L/2-t),(L/2-t)
+D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL  
+
+
+*DIM,FORCE,ARRAY,4,1,1, , , 
+*SET,FORCE(2,1,1) , 1500
+*SET,FORCE(3,1,1) , 1500
+*SET,FORCE(4,1,1) , 1500
+*DIM,TIME,ARRAY,4,1,1, , ,  
+*SET,TIME(2,1,1) , 200  
+*SET,TIME(3,1,1) , 1000
+*SET,TIME(4,1,1) , 10000
+NSEL,S,LOC,X,0
+NSEL,R,LOC,Y,0
+CM,F_NODE,NODE  
+CMSEL,A,F_NODE
+EDLOAD,ADD,FZ,0,F_NODE,TIME,FORCE, 0, , , , ,   
+ALLSEL,ALL  
+
+
+FINISH  
+/SOL
+TIME,3000,
+EDWRITE,LSDYNA,'plate-dynamic','k','    
