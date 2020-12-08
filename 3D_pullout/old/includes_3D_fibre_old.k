@@ -8,15 +8,28 @@ R exp     1.6
 *CONTROL_BULK_VISCOSITY
 $#      q1        q2      type     btype
   1.500000 6.0000E-2         1         0
+*CONTROL_CONTACT
+$#  slsfac    rwpnal    islchk    shlthk    penopt    thkchg     orien    enmass
+  0.100000     0.000         2         0         1         0         1         0
+$#  usrstr    usrfrc     nsbcs    interm     xpene     ssthk      ecdt   tiedprj
+         0         0        10         0  4.000000         0         0         0
+$#   sfric     dfric       edc       vfc        th     th_sf    pen_sf
+     0.030     0.020     0.000     0.000     0.000     0.000     0.000
+$#  ignore    frceng   skiprwg    outseg   spotstp   spotdel   spothin
+         0         0         0         0         0         0     0.000
+$#    isym    nserod    rwgaps    rwgdth     rwksf      icov    swradf    ithoff
+         0         0         1     0.000  1.000000         0     0.000         0
+$#  shledg    pstiff    ithcnt    tdcnof     ftall    unused    shltrw
+         0         0         0         0         0               0.000
 *CONTROL_COUPLING
 $#  unleng    untime    unforc    timidl     flipx     flipy     flipz    subcyl
   1.000000  1.000000  1.000000     0.000         0         0         0         1
 *CONTROL_CPU
 $#  cputim
      0.000
-$$$*CONTROL_DYNAMIC_RELAXATION
-$$$$#  nrcyck     drtol    drfctr    drterm    tssfdr    irelal     edttl    idrflg
-$$$       250 1.0000E-3  0.9950001.0000E+30  0.900000         0 4.0000E-2         0
+*CONTROL_DYNAMIC_RELAXATION
+$#  nrcyck     drtol    drfctr    drterm    tssfdr    irelal     edttl    idrflg
+       250 1.0000E-3  0.9950001.0000E+30  0.900000         0 4.0000E-2         0
 *CONTROL_ENERGY
 $#    hgen      rwen    slnten     rylen
          1         2         1         1
@@ -37,16 +50,16 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
 *CONTROL_TERMINATION
 $#  endtim    endcyc     dtmin    endeng    endmas
-    500.00         0     0.000     0.000     0.000
+  10000.00         0     0.000     0.000     0.000
 *CONTROL_TIMESTEP
 $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
-     0.000  0.670000         0     0.000     0.000         0         0         0
+     0.000  0.900000         0     0.000     0.000         0         0         0
 $#  dt2msf   dt2mslc     imscl    unused    unused     rmscl
      0.000         0         0                         0.000
 *DATABASE_BINARY_D3PLOT
-50.00    
+100.00    
 *DATABASE_BINARY_D3THDT
-5.000
+25.000
 *DATABASE_BINARY_D3DUMP
 5000000
 *DATABASE_EXTENT_BINARY
@@ -58,31 +71,29 @@ $# nintsld   pkp_sen      sclp     hydro     msscl     therm    intout    nodout
          0         0  1.000000         0         0         0STRESS    STRESS
 $#    dtdt    resplt
          0         0
-$$$*MAT_CONCRETE_DAMAGE_REL3
-$$$$#     mid        ro        pr
-$$$         1 2.2000E-3  0.180000
-$$$$#      ft        a0        a1        a2        b1     omega       a1f
-$$$  0.000000  -35.0000     0.000     0.000     0.000     0.000     0.000
-$$$$# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
-$$$     0.000     0.000     0.000  0.039370  145.0000      1111     0.000     0.000
-$$$$# lambda1   lambda2   lambda3   lambda4   lambda5   lambda6   lambda7   lambda8
-$$$     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-$$$$#lambda09  lambda10  lambda11  lambda12  lambda13        b3       a0y       a1y
-$$$     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-$$$$#    eta1      eta2      eta3      eta4      eta5      eta6      eta7      eta8
-$$$     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-$$$$#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
-$$$     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
-*MAT_PLASTIC_KINEMATIC
-$#     mid        ro         e        pr      sigy      etan      beta    
-         1   0.00254   45000.0      0.28      45.0   17578.0       0.0
-$#     src       srp        fs        vp  
-       0.0       0.0       1.5       0.0
+*CONTACT_1D
+$#   nsids     nsidm       err      sigc        gb      smax       exp
+         3         4      &err     &sigc       &gb     &smax      &exp 
+*MAT_CONCRETE_DAMAGE_REL3
+$#     mid        ro        pr
+         1 2.2000E-3  0.180000
+$#      ft        a0        a1        a2        b1     omega       a1f
+  3.000000  -35.0000     0.000     0.000     0.000     0.000     0.000
+$# slambda      nout     edrop     rsize       ucf    lcrate  locwidth      npts
+     0.000     0.000     0.000  0.039370  145.0000      1111     0.000     0.000
+$# lambda1   lambda2   lambda3   lambda4   lambda5   lambda6   lambda7   lambda8
+     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
+$#lambda09  lambda10  lambda11  lambda12  lambda13        b3       a0y       a1y
+     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
+$#    eta1      eta2      eta3      eta4      eta5      eta6      eta7      eta8
+     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
+$#   eta09     eta10     eta11     eta12     eta13        b2       a2f       a2y
+     0.000     0.000     0.000     0.000     0.000     0.000     0.000     0.000
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          1     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     0.000     0.002     0.000     0.000     0.000     0.000
+     0.000     0.000     1.710    0.0010     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
@@ -101,7 +112,7 @@ $#     src       srp        fs        vp
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
          2     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
-     0.000     0.000     600.0     0.250     0.000     0.000     0.000     0.000
+     0.000     0.000     210.0  0.250000     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt

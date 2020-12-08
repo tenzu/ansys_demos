@@ -5,8 +5,9 @@ KEYW,PR_SET,1
 KEYW,PR_STRUC,1
 KEYW,LSDYNA,1
 KEYW,PR_DYNA,1
-! /CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout'
-/CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout_tmp'
+!/CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout'
+!/CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout_tmp'
+/CWD,'C:\Users\itenz\Desktop\tmp\3D_pullout'
 
 
 PI = acos(-1)
@@ -45,10 +46,9 @@ MP,EX,2,2e5
 MP,NUXY,2,0.28
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes array
 
-CSWPLA,11,0,1,1,	!temporary Cartesian coordinate system
-CSWPLA,12,1,1,1,	!temporary Cylindrical coordinate system
+CSWPLA,11,1,1,1,	!temporary Cylindrical coordinate system
 
-CSYS,12,
+CSYS,11,
 !BLOCK, ,H/2, ,H/2,-(H-s*p),s*p
 wpoff,0,0,-(H-s*p)
 CYL4, , ,0,0,r,90,H   !inner cylindar (from 0 to r)
@@ -62,7 +62,7 @@ VGLUE,ALL
 WPCSYS,-1,0
 VATT,1,1,1,0
 
-CSYS,12,
+CSYS,11,
 VSEL,S, , ,5    !select first inner 1/4 cylindar (!!!fixed volume number 5!!!)
 ASLV,R  
 LSLA,R
@@ -271,7 +271,7 @@ MSHAPE,0,3d
 MSHKEY,1    !mesh all volumns
 VMESH,ALL   
 
-CSYS,11,
+CSYS,0,
 VSYMM,X,ALL, , , ,0,0
 VSYMM,Y,ALL, , , ,0,0
 NUMMRG,ALL, , , ,LOW
@@ -282,7 +282,7 @@ REAL,1
 ESYS,0
 SECNUM,
 *GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
-CSYS,12
+CSYS,11
 *DO,j,1,n*p+1,1 !get nodes for single fibre
     r1=r-margin/2
     r2=r+margin/2
@@ -312,42 +312,43 @@ WPCSYS,-1,0
 /TRLCY,ELEM,0.75,ALL,,, 
 /REPLOT 
 
-ESEL,S,MAT,,2   !node and beam element for loading
+ESEL,S,MAT,,2
 NSLE,R  
-*GET,z_max,NODE, ,MXLOC,Z	!n_max for temporarily storing maximum node number
-!*GET,z_n_max,NODE,0,NUM,
-!NWPAVE,n_max
-!CSYS,4  
-!N, , , ,s*p, , , ,
-!CSYS,0
-!*GET,nn_max,NODE,0,NUM,MAX	!nn_max for temporarily storing maximum node number
-!E,n_max,nn_max
-!NSEL,S, , ,nn_max 
-!CM,PULL,NODE
-!CMSEL,A,PULL
-!*DIM,TIME,ARRAY,2,1,1, , ,  
-!*SET,TIME(2,1,1) , 60000   
-!*DIM,DISP,ARRAY,2,1,1, , ,  
-!*SET,DISP(2,1,1) , 1.0
-!EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
-!ALLSEL,ALL  
+WPCSYS,-1,0
+CSYS,0
+NWPAVE,F_NODES(n*p+1,1,1)
+CSWPLA,12,1,1,1,	!temporary Cartesian coordinate system
+N, , , ,s*p, , , ,  !here s*p for the straight length of fibre
+CSYS,0
+WPCSYS,-1,0
+*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
+E,F_NODES(n*p+1,1,1),n_max
+NSEL,S, , ,n_max 
+CM,PULL,NODE
+CMSEL,A,PULL
+*DIM,TIME,ARRAY,2,1,1, , ,  
+*SET,TIME(2,1,1) , 60000   
+*DIM,VELO,ARRAY,2,1,1, , ,  
+*SET,VELO(1,1,1) ,50.0
+*SET,VELO(2,1,1) ,50.0
+EDLOAD,ADD,VZ,0,PULL,TIME,VELO, 0, , , , ,  
+ALLSEL,ALL  
 
-!ESEL,S,MAT,,1   !merge concrete nodes
-!NSLE,R  
-!NUMMRG,NODE, , , ,LOW   
-!ALLSEL,ALL  
-!
-!ASEL,S,LOC,Z,-(H-s*p)  !fix end
-!NSLA,R,1
-!D,ALL, , , , , ,ALL, , , , ,   
-!ALLSEL,ALL  
-!
-!
-!FINISH
-!/SOL
-!TIME,3,
-!EDRST, ,0.1,
-!EDHTIME, ,0,
-!EDDUMP, ,0,
-!EDWRITE,LSDYNA,'tmp','k',' '
-!
+ESEL,S,MAT,,1   !merge concrete nodes
+NSLE,R  
+NUMMRG,NODE, , , ,LOW   
+ALLSEL,ALL  
+
+ASEL,S,LOC,Z,-(H-s*p)  !fix end
+NSLA,R,1
+D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL  
+
+
+FINISH
+/SOL
+TIME,3,
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0,
+EDWRITE,LSDYNA,'tmp','k',' '
