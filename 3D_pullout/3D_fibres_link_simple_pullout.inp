@@ -268,125 +268,119 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
-VSEL,S,LOC,X,0,r_outer  
-!EXTOPT,VSWE,TETS,1
-VSWEEP,ALL
-ALLSEL,ALL
-!VSEL,S,LOC,X,r_outer,H  
-!MSHKEY,0
-!MSHAPE,1,3d 
-!VMESH,ALL
-!ALLSEL,ALL
+MSHAPE,0,3d 
+MSHKEY,1    !mesh all volumns
+VMESH,ALL   
 
 CSYS,11,
 VSYMM,X,ALL, , , ,0,0
 VSYMM,Y,ALL, , , ,0,0
 NUMMRG,ALL, , , ,LOW
 
-
 *GET,ii,NODE,0,NUM,MAX !ii for temporarily storing maximum node number
-CSYS,12
-*DO,j,1,n*p+1,1 !draw nodes for single fibre
-    r1=r-margin/2
-    r2=r+margin/2
-    NSEL,S,LOC,X,r1,r2
-    theta1=mod(360*(j-1)/n,360)-360/n/D
-    theta2=mod(360*(j-1)/n,360)+360/n/D
-    *IF,theta1,lt,theta2,THEN
-        NSEL,R,LOC,Y,theta1,theta2
-    *ELSE
-        NSEL,R,LOC,Y,-(360-theta1),theta2
-    *ENDIF
-    gama1=s/n*(j-1)-s/n/D/2
-    gama2=s/n*(j-1)+s/n/D/2
-    NSEL,R,LOC,Z,gama1,gama2
-    *GET,ijk,NODE,0,NUM,MIN
-    *SET,C_NODES(j,1,1),ijk
-    *GET,iii,NODE,ijk,LOC,X
-    *GET,jjj,NODE,ijk,LOC,Y
-    *GET,kkk,NODE,ijk,LOC,Z
-    N,,iii,jjj,kkk
-	*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
-	*SET,F_NODES(j,1,1),n_max
-    ALLSEL,ALL
-*ENDDO
-
-CSYS,11
-TYPE,2
-MAT,2
-REAL,1
-ESYS,0
-SECNUM,
-*DO,j,1,n*p,1   !draw beam elements for single fibre
-    E,ii+j,ii+j+1
-*ENDDO
-WPCSYS,-1,0
-
-*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
-    *SET,j,C_NODES(i,1,1)
-    *IF,i,eq,1,then
-        NSEL,S,,,j
-    *ELSE
-        NSEL,A,,,j
-    *ENDIF
-*ENDDO
-CM,C_NODES,NODE
-CMSEL,A,C_NODES
-ALLSEL,ALL
-
-*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
-    *SET,j,F_NODES(i,1,1)
-    *IF,i,eq,1,then
-        NSEL,S,,,j
-    *ELSE
-        NSEL,A,,,j
-    *ENDIF
-*ENDDO
-CM,F_NODES,NODE
-CMSEL,A,F_NODES
-ALLSEL,ALL
-
-CMSEL,S,C_NODES 	!concrete node set for 1D contact
-D,ALL, , , , , ,UX, , , , ,
-ALLSEL,ALL
-CMSEL,S,F_NODES 	!fibre node set for 1D contact
-D,ALL, , , , , ,UY, , , , ,
-ALLSEL,ALL
-
-ESEL,S,MAT,,2   !node and beam element for loading
-NSLE,R  
-*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
-NWPAVE,n_max
-CSYS,4  
-N, ,,,s*p,,,,
-CSYS,0
-*GET,nn_max,NODE,0,NUM,MAX	!nn_max for temporarily storing maximum node number
-E,n_max,nn_max
-NSEL,S, , ,nn_max 
-CM,PULL,NODE
-CMSEL,A,PULL
-*DIM,TIME,ARRAY,2,1,1, , ,  
-*SET,TIME(2,1,1) , 60000   
-*DIM,DISP,ARRAY,2,1,1, , ,  
-*SET,DISP(2,1,1) , 1.0
-EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
-ALLSEL,ALL  
-
-ESEL,S,MAT,,1   !merge concrete nodes
-NSLE,R  
-NUMMRG,NODE, , , ,LOW   
-ALLSEL,ALL  
-
-ASEL,S,LOC,Z,-(H-s*p)  !fix end
-NSLA,R,1
-D,ALL, , , , , ,ALL, , , , ,   
-ALLSEL,ALL  
-
-
-FINISH
-/SOL
-TIME,3,
-EDRST, ,0.1,
-EDHTIME, ,0,
-EDDUMP, ,0,
-EDWRITE,LSDYNA,'tmp','k',' '
+!CSYS,12
+!*DO,j,1,n*p+1,1 !draw nodes for single fibre
+!    r1=r-margin/2
+!    r2=r+margin/2
+!    NSEL,S,LOC,X,r1,r2
+!    theta1=mod(360*(j-1)/n,360)-360/n/D
+!    theta2=mod(360*(j-1)/n,360)+360/n/D
+!    *IF,theta1,lt,theta2,THEN
+!        NSEL,R,LOC,Y,theta1,theta2
+!    *ELSE
+!        NSEL,R,LOC,Y,-(360-theta1),theta2
+!    *ENDIF
+!    gama1=s/n*(j-1)-s/n/D/2
+!    gama2=s/n*(j-1)+s/n/D/2
+!    NSEL,R,LOC,Z,gama1,gama2
+!    *GET,ijk,NODE,0,NUM,MIN
+!    *SET,C_NODES(j,1,1),ijk
+!    *GET,iii,NODE,ijk,LOC,X
+!    *GET,jjj,NODE,ijk,LOC,Y
+!    *GET,kkk,NODE,ijk,LOC,Z
+!    N,,iii,jjj,kkk
+!	*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
+!	*SET,F_NODES(j,1,1),n_max
+!    ALLSEL,ALL
+!*ENDDO
+!
+!CSYS,11
+!TYPE,2
+!MAT,2
+!REAL,1
+!ESYS,0
+!SECNUM,
+!*DO,j,1,n*p,1   !draw beam elements for single fibre
+!    E,ii+j,ii+j+1
+!*ENDDO
+!WPCSYS,-1,0
+!
+!*DO,i,1,f_num*(n*p+1),1 !concrete nodes for 1D contact
+!    *SET,j,C_NODES(i,1,1)
+!    *IF,i,eq,1,then
+!        NSEL,S,,,j
+!    *ELSE
+!        NSEL,A,,,j
+!    *ENDIF
+!*ENDDO
+!CM,C_NODES,NODE
+!CMSEL,A,C_NODES
+!ALLSEL,ALL
+!
+!*DO,i,1,f_num*(n*p+1),1 !fibre nodes for 1D contact
+!    *SET,j,F_NODES(i,1,1)
+!    *IF,i,eq,1,then
+!        NSEL,S,,,j
+!    *ELSE
+!        NSEL,A,,,j
+!    *ENDIF
+!*ENDDO
+!CM,F_NODES,NODE
+!CMSEL,A,F_NODES
+!ALLSEL,ALL
+!
+!CMSEL,S,C_NODES 	!concrete node set for 1D contact
+!D,ALL, , , , , ,UX, , , , ,
+!ALLSEL,ALL
+!CMSEL,S,F_NODES 	!fibre node set for 1D contact
+!D,ALL, , , , , ,UY, , , , ,
+!ALLSEL,ALL
+!
+!ESEL,S,MAT,,2   !node and beam element for loading
+!NSLE,R  
+!*GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
+!NWPAVE,n_max
+!CSYS,4  
+!N, ,,,s*p,,,,
+!CSYS,0
+!*GET,nn_max,NODE,0,NUM,MAX	!nn_max for temporarily storing maximum node number
+!E,n_max,nn_max
+!NSEL,S, , ,nn_max 
+!CM,PULL,NODE
+!CMSEL,A,PULL
+!*DIM,TIME,ARRAY,2,1,1, , ,  
+!*SET,TIME(2,1,1) , 60000   
+!*DIM,DISP,ARRAY,2,1,1, , ,  
+!*SET,DISP(2,1,1) , 1.0
+!EDLOAD,ADD,UZ,0,PULL,TIME,DISP, 0, , , , ,  
+!ALLSEL,ALL  
+!
+!ESEL,S,MAT,,1   !merge concrete nodes
+!NSLE,R  
+!NUMMRG,NODE, , , ,LOW   
+!ALLSEL,ALL  
+!
+!ASEL,S,LOC,Z,-(H-s*p)  !fix end
+!NSLA,R,1
+!D,ALL, , , , , ,ALL, , , , ,   
+!ALLSEL,ALL  
+!
+!
+!FINISH
+!/SOL
+!TIME,3,
+!EDRST, ,0.1,
+!EDHTIME, ,0,
+!EDDUMP, ,0,
+!EDWRITE,LSDYNA,'tmp','k',' '
+!
