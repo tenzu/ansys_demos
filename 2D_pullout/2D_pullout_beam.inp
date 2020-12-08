@@ -1,0 +1,126 @@
+FINISH
+/CLEAR,NOSTART
+
+/NOPR
+KEYW,PR_SET,1
+KEYW,PR_STRUC,1
+KEYW,LSDYNA,1
+KEYW,PR_DYNA,1
+!/CWD,'C:\Users\Cliff\Desktop\tmp\2D_pullout'
+
+PI = acos(-1)
+r = 1	!spiral fibre coil radius (mm)
+s = 10 	!spiral fibre pitch (mm)
+n = 16	!division in single pitch (n must be multiple of 4)
+p = 1+8/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
+K_num = p*n+1	!total node number in one spiral fibre
+L_num = K_num-1 !total element number in one spiral fibre
+r_beam = 0.25   !radius of fibre section (mm)
+r_margin = r_beam/2.00    !gap between fibre and concrete
+r_inner= 3*r+r_margin+r_beam   !radius of inner cylindar
+!H = 75  !total depth of specimen (mm)
+H = 2.00*s*p  !total depth of specimen (mm)
+
+/PREP7
+ET,1,LINK160
+ET,2,SHELL163
+*SET,_RC_SET,1, 
+R,1,0.2,
+*SET,_RC_SET,2, 
+R,2 
+RMODIF,2,1, , ,1, , , , 
+MPTEMP,,,,,,,   !fibre material model (number 1)
+MP,DENS,1,7800  
+MP,EX,1,2e11
+MP,NUXY,1,0.3
+MPTEMP,,,,,,,   !bonding material model (number 2)
+MP,DENS,2,7800
+MP,EX,2,2e11
+MP,NUXY,2,0.3
+MPTEMP,,,,,,,   !concrete material model (number 3)
+MP,DENS,3,2200
+MP,EX,3,3e10
+MP,NUXY,3,0.2
+
+*DIM,SPLINE,ARRAY,n*p+1,2,1, , ,
+*DIM,K_spline,ARRAY,n*p+1,1,1, , ,
+*DO,i,0,n*p,1   !keypoints for spline
+    *SET,SPLINE(i+1,1,1),(s/n)*i
+    *SET,SPLINE(i+1,2,1),r*sin(2*PI*i/n)
+    K,,SPLINE(i+1,1,1),SPLINE(i+1,2,1)
+    *GET,K_max,KP,0,NUM,MAX
+    *SET,K_spline(i+1,1,1),K_max
+*ENDDO
+FLST,3,K_max,3
+*DO,i,1,K_max,1
+	FITEM,3,i
+*ENDDO
+BSPLIN, ,P51X	!draw spline
+LGEN,2,1, , , ,r_margin, , ,0
+LGEN,2,1, , , ,-r_margin, , ,0
+LSTR,1,K_max+1
+LSTR,1,K_max+3
+LSTR,K_max,K_max+2
+LSTR,K_max,K_max+4
+AL,1,4,2,6  !create spline area, fixed line number!!!
+AL,1,5,3,7  !create spline area, fixed line number!!!
+RECTNG,0,s*p,-r_inner,r_inner,  !draw concrete
+RECTNG,s*p,H,-r_inner,r_inner,
+RECTNG,0,s*p,r_inner,H/2,
+RECTNG,s*p,H,r_inner,H/2,
+RECTNG,0,s*p,-r_inner,-H/2,
+RECTNG,s*p,H,-r_inner,-H/2,
+AOVLAP,ALL
+NUMCMP,ALL
+
+LSEL,S,LOC,X,0, !mesh sizes for lines
+LSEL,A,LOC,X,s*p,
+LSEL,A,LOC,X,H,
+LSEL,R,LOC,Y,-r_inner,r_inner,
+LESIZE,ALL,r_margin, , , , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,X,0.25*s*p,0.75*s*p
+LESIZE,ALL,2.00*r_margin, , , , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
+LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
+ALLSEL,ALL
+LSEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r_inner+0.75*(H-r_inner)/2
+LSEL,A,LOC,Y,-r_inner-0.25*(H-r_inner)/2,-r_inner-0.75*(H-r_inner)/2
+LESIZE,ALL,1.00*s/n , , , , , , ,0,
+ALLSEL,ALL
+
+AATT,2,2,2,0    !mesh attribute for bond matireal
+ASEL,S, , ,1    !!!fixed area number!!!
+ASEL,A, , ,2    !!!fixed area number!!!
+MSHKEY,1    !area meshing
+AMESH,ALL
+ALLSEL,ALL
+AATT,3,2,2,0    !mesh attribute for concrete
+ASEL,U, , ,1    !!!fixed area number!!!
+ASEL,U, , ,2    !!!fixed area number!!!
+FLST,2,4,4,ORDE,4   
+FITEM,2,14      !!!fixed line number!!!
+FITEM,2,6       !!!fixed line number!!!
+FITEM,2,7       !!!fixed line number!!!
+FITEM,2,16      !!!fixed line number!!!
+LCCAT,P51X  
+MSHKEY,1    !area meshing
+AMESH,ALL
+ALLSEL,ALL
+
+*GET,N_min_2,NODE,0,NUM,MAX
+LSEL,S, , ,1    !!!select line 1!!!
+NSLL,S,1        !!!select nodes attach to line 1!!!
+*GET,N_max_1,NODE,0,NUM,MAX
+E,1,3   !!!create beam elements along spline!!!
+*DO,i,3,N_max_1-1,1
+    E,i,i+1
+*ENDDO
+E,N_max_1,2
+NSYM,X,N_min_2,ALL
+*GET,N_max_2,NODE,0,NUM,MAX
+FLST,5,N_max_2-N_min_2+1,1,ORDE,2  
+FITEM,5,N_max_2
+FITEM,5,-N_min_2   
+NSYM,Y,N_max_2,ALL
