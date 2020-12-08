@@ -6,9 +6,6 @@ KEYW,PR_STRUC,1
 KEYW,LSDYNA,1
 KEYW,PR_DYNA,1
 !/CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout'
-!/CWD,'C:\Users\Cliff\Desktop\tmp\3D_pullout_tmp'
-/CWD,'C:\Users\itenz\Desktop\tmp\3D_pullout'
-
 
 PI = acos(-1)
 r_disk = 37.5	!disk radius (mm)
@@ -29,6 +26,7 @@ L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
 f_num = 1	!number of fibres
 H = s*p+3*r  !total depth of specimen (mm)
+z_velo = 50 !pull velocity (m/s)
 
 /VIEW,1,1,1,1   
 /ANG,1  
@@ -326,11 +324,13 @@ E,F_NODES(n*p+1,1,1),n_max
 NSEL,S, , ,n_max 
 CM,PULL,NODE
 CMSEL,A,PULL
-*DIM,TIME,ARRAY,2,1,1, , ,  
-*SET,TIME(2,1,1) , 60000   
-*DIM,VELO,ARRAY,2,1,1, , ,  
-*SET,VELO(1,1,1) ,50.0
-*SET,VELO(2,1,1) ,50.0
+*DIM,TIME,ARRAY,3,1,1, , ,  
+*SET,TIME(2,1,1) , 1E3
+*SET,TIME(3,1,1) , 1E9
+*DIM,VELO,ARRAY,3,1,1, , ,  
+*SET,VELO(1,1,1) ,0.0
+*SET,VELO(2,1,1) ,z_velo/60
+*SET,VELO(3,1,1) ,z_velo/60
 EDLOAD,ADD,VZ,0,PULL,TIME,VELO, 0, , , , ,  
 ALLSEL,ALL  
 
