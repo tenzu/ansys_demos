@@ -329,8 +329,8 @@ CMSEL,A,PULL
 *SET,TIME(3,1,1) , 1E9
 *DIM,VELO,ARRAY,3,1,1, , ,  
 *SET,VELO(1,1,1) ,0.0
-*SET,VELO(2,1,1) ,z_velo/60
-*SET,VELO(3,1,1) ,z_velo/60
+*SET,VELO(2,1,1) ,z_velo/6E4
+*SET,VELO(3,1,1) ,z_velo/6E4
 EDLOAD,ADD,VZ,0,PULL,TIME,VELO, 0, , , , ,  
 ALLSEL,ALL  
 
