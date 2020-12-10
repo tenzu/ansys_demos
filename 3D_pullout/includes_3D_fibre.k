@@ -37,7 +37,7 @@ $# psstupd   sidt4tu     cntco    itsflg    irquad
          0         0         0         0         2
 *CONTROL_TERMINATION
 $#  endtim    endcyc     dtmin    endeng    endmas
-    500.00         0     0.000     0.000     0.000
+   5000.00         0     0.000     0.000     0.000
 *CONTROL_TIMESTEP
 $#  dtinit    tssfac      isdo    tslimt     dt2ms      lctm     erode     ms1st
      0.000  0.670000         0     0.000     0.000         0         0         0
