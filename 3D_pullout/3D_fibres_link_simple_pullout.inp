@@ -39,9 +39,13 @@ R,1,r_beam,  !section area for fibre
 MP,DENS,1,0.0024    !material properties
 MP,EX,1,2e4
 MP,NUXY,1,0.2
-MP,DENS,2,0.0078
-MP,EX,2,2e5
-MP,NUXY,2,0.28
+MP,DENS,2,0.0024    !material properties
+MP,EX,2,2.1e4
+MP,NUXY,2,0.2
+MP,DENS,3,0.0078
+MP,EX,3,2e5
+MP,NUXY,3,0.28
+
 *DIM,F_NODES,ARRAY,f_num*(n*p+1),1,1, , ,   !fibre nodes array
 
 CSWPLA,11,1,1,1,	!temporary Cylindrical coordinate system
@@ -58,7 +62,6 @@ wpoff,0,0,-r_outer
 !VOVLAP,ALL
 VGLUE,ALL
 WPCSYS,-1,0
-VATT,1,1,1,0
 
 CSYS,11,
 VSEL,S, , ,5    !select first inner 1/4 cylindar (!!!fixed volume number 5!!!)
@@ -265,9 +268,19 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
+VSEL,S, , ,5    !!!fixed volume number!!!
+VSEL,A, , ,4
+VSEL,A, , ,10
+VSEL,A, , ,3
+VATT,1,1,1,0    !mesh attribute for concrete
+ALLSEL,ALL
+VSEL,S, , ,2    !!!fixed volume number!!!
+VSEL,A, , ,1
+VATT,2,1,1,0    !mesh attribute for middle 1/4 cylindar
+ALLSEL,ALL
 MSHAPE,0,3d 
 MSHKEY,1    !mesh all volumns
-VMESH,ALL   
+VMESH,ALL
 
 CSYS,0,
 VSYMM,X,ALL, , , ,0,0
@@ -275,7 +288,7 @@ VSYMM,Y,ALL, , , ,0,0
 NUMMRG,ALL, , , ,LOW
 
 TYPE,2
-MAT,2
+MAT,3
 REAL,1
 ESYS,0
 SECNUM,
@@ -310,7 +323,7 @@ WPCSYS,-1,0
 /TRLCY,ELEM,0.75,ALL,,, 
 /REPLOT 
 
-ESEL,S,MAT,,2
+ESEL,S,MAT,,3
 NSLE,R  
 WPCSYS,-1,0
 CSYS,0
@@ -321,6 +334,7 @@ CSYS,0
 WPCSYS,-1,0
 *GET,n_max,NODE,0,NUM,MAX	!n_max for temporarily storing maximum node number
 E,F_NODES(n*p+1,1,1),n_max
+
 NSEL,S, , ,n_max 
 CM,PULL,NODE
 CMSEL,A,PULL
@@ -335,6 +349,7 @@ EDLOAD,ADD,VZ,0,PULL,TIME,VELO, 0, , , , ,
 ALLSEL,ALL  
 
 ESEL,S,MAT,,1   !merge concrete nodes
+ESEL,A,MAT,,2
 NSLE,R  
 NUMMRG,NODE, , , ,LOW   
 ALLSEL,ALL  
@@ -343,7 +358,6 @@ ASEL,S,LOC,Z,-(H-s*p)  !fix end
 NSLA,R,1
 D,ALL, , , , , ,ALL, , , , ,   
 ALLSEL,ALL  
-
 
 FINISH
 /SOL

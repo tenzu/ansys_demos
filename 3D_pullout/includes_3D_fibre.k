@@ -87,6 +87,20 @@ $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
          0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
 $#   lcfld             epsthin    engcrt    radcrt
          0         0     0.000     0.000     0.000
+*MAT_PLASTIC_KINEMATIC
+$#     mid        ro         e        pr      sigy      etan      beta    
+         2   0.00254   45000.0      0.28      45.0   17578.0       0.0
+$#     src       srp        fs        vp  
+       0.0       0.0       1.5       0.0
+*MAT_ADD_EROSION
+$#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
+         2     0.000     0.000     0.000   0.00050    -0.001  1.000000  1.000000
+$#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
+     0.000     0.000     0.000     0.002     0.000     0.000     0.000     0.000
+$#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
+         0     0.000         0     0.000  1.000000     0.000  1.000000     0.000
+$#   lcfld             epsthin    engcrt    radcrt
+         0         0     0.000     0.000     0.000
 *SECTION_BEAM
 $#   secid    elform      shrf   qr/irid       cst     scoor       nsm
          2         1     0.000         0         1     0.000     0.000
@@ -94,12 +108,12 @@ $#     ts1       ts2       tt1       tt2     nsloc     ntloc
   0.500000  0.500000     0.000     0.000     0.000     0.000
 *MAT_PLASTIC_KINEMATIC
 $#     mid        ro         e        pr      sigy      etan      beta
-         2 7.8000E-3 2.0000E+5  0.280000  450.0000 81.000000  1.000000
+         3 7.8000E-3 2.0000E+5  0.280000  450.0000 81.000000  1.000000
 $#     src       srp        fs        vp
      0.000     0.000     0.200     0.000
 *MAT_ADD_EROSION
 $#     mid      excl    mxpres     mneps    effeps    voleps    numfip       ncs
-         2     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
+         3     0.000     0.000     0.000     0.000     0.000  1.000000  1.000000
 $#  mnpres     sigp1     sigvm     mxeps     epssh     sigth   impulse    failtm
      0.000     0.000     600.0     0.250     0.000     0.000     0.000     0.000
 $#    idam    dmgtyp     lcsdg     ecrit    dmgexp     dcrit    fadexp    lcregd
