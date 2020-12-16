@@ -190,36 +190,36 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
-!VSEL,S,LOC,X,0,r1-margin    !select second inner 1/4 cylindar
-!VSEL,R,LOC,Z,0,-H_margin
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Z,-3*r
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
-!ALLSEL,ALL
-!CMDELE,CM_1
+VSEL,S,LOC,X,0,r1-margin    !select second inner 1/4 cylindar
+VSEL,R,LOC,Z,0,-H_margin
+ASLV,R  
+LSLA,R
+CM,CM_1,LINE    !line component
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,0  
+LSEL,R,LOC,Z,-H_margin
+LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,90  
+LSEL,R,LOC,Z,-H_margin
+LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 2
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r1
+LSEL,R,LOC,Z,-H_margin
+LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,X,0  
+LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r1
+LSEL,R,LOC,Y,0  
+LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r1
+LSEL,R,LOC,Y,90  
+LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
+ALLSEL,ALL
+CMDELE,CM_1
 
 !VSEL,S, , ,1    !select second middle 1/4 cylindar (!!!fixed volume number 1!!!)
 !ASLV,R  
