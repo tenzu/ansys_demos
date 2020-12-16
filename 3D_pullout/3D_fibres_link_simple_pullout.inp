@@ -27,7 +27,8 @@ K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
 f_num = 1	!number of fibres
-H = s*p+2*r  !total depth of specimen (mm)
+H_margin=2*r    !margin from bottom of fibre (mm)
+H = s*p+H_margin  !total depth of specimen (mm)
 z_velo = 50 !pull velocity (m/s)
 
 /VIEW,1,1,1,1   
@@ -67,7 +68,7 @@ WPCSYS,-1,0
 
 CSYS,11,    !!!make sure the length of D roughly equals to length of s/n!!!
 VSEL,S,LOC,X,0,r1-margin    !select first inner 1/4 cylindar
-VSEL,R,LOC,Z,0,H
+VSEL,R,LOC,Z,0,H-H_margin
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
@@ -110,7 +111,7 @@ ALLSEL,ALL
 CMDELE,CM_1
 
 VSEL,S,LOC,X,r1-margin,r2   !select first middle 1/4 cylindar
-VSEL,R,LOC,Z,0,H
+VSEL,R,LOC,Z,0,H-H_margin
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
@@ -150,7 +151,7 @@ ALLSEL,ALL
 CMDELE,CM_1
 
 VSEL,S,LOC,X,r2,r3   !select first outer 1/4 cylindar
-VSEL,R,LOC,Z,0,H
+VSEL,R,LOC,Z,0,H-H_margin
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
@@ -189,18 +190,19 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
-!VSEL,S, , ,4    !select second inner 1/4 cylindar (!!!fixed volume number 4!!!)
+!VSEL,S,LOC,X,0,r1-margin    !select second inner 1/4 cylindar
+!VSEL,R,LOC,Z,0,-H_margin
 !ASLV,R  
 !LSLA,R
 !CM,CM_1,LINE    !line component
 !CMSEL,S,CM_1
 !LSEL,R,LOC,Y,0  
 !LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 1
+!LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 1
 !CMSEL,S,CM_1
 !LSEL,R,LOC,Y,90  
 !LSEL,R,LOC,Z,-3*r  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !radial direction mesh size 2
+!LESIZE,ALL, , ,D-1, ,1, , ,0,   !radial direction mesh size 2
 !CMSEL,S,CM_1
 !LSEL,R,LOC,X,r  
 !LSEL,R,LOC,Z,-3*r
@@ -218,7 +220,7 @@ CMDELE,CM_1
 !LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
 !ALLSEL,ALL
 !CMDELE,CM_1
-!
+
 !VSEL,S, , ,1    !select second middle 1/4 cylindar (!!!fixed volume number 1!!!)
 !ASLV,R  
 !LSLA,R
