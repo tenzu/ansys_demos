@@ -20,9 +20,9 @@ p = 1+0/n	!spital fibre total pitch number (must be an integer plus integral mul
 theta = p*360	!spiral fibre total rotation angle (DEG)
 !margin = 2*PI*r/n  !margin from fibre to outer cylindar (mm)
 margin = r/D  !margin from fibre to outer cylindar (mm)
-r1=r-margin !radius of first cylindar
-r2=r+margin !radius of second cylindar
-r3=2*r  !radius of third cylindar
+r1=r-margin !radius of inner cylindar
+r2=r+margin !radius of middle cylindar
+r3=2*r  !radius of outer cylindar
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
@@ -66,7 +66,8 @@ VGLUE,ALL
 WPCSYS,-1,0
 
 CSYS,11,    !!!make sure the length of D roughly equals to length of s/n!!!
-VSEL,S, , ,5    !select first inner 1/4 cylindar (!!!fixed volume number 5!!!)
+VSEL,S,LOC,X,0,r1-margin    !select first inner 1/4 cylindar
+VSEL,R,LOC,Z,0,H
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
@@ -108,7 +109,8 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 3
 ALLSEL,ALL
 CMDELE,CM_1
 
-VSEL,S, , ,2    !select first middle 1/4 cylindar (!!!fixed volume number 2!!!)
+VSEL,S,LOC,X,r1-margin,r2   !select first middle 1/4 cylindar
+VSEL,R,LOC,Z,0,H
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
@@ -147,7 +149,8 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
-VSEL,S, , ,10   !select first outer 1/4 cylindar (!!!fixed volume number 10!!!)
+VSEL,S,LOC,X,r2,r3   !select first outer 1/4 cylindar
+VSEL,R,LOC,Z,0,H
 ASLV,R  
 LSLA,R
 CM,CM_1,LINE    !line component
