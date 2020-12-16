@@ -108,45 +108,45 @@ LESIZE,ALL,s/n/2, , , ,1, , ,0,   !axial direction mesh size 3
 ALLSEL,ALL
 CMDELE,CM_1
 
-!VSEL,S, , ,2    !select first middle 1/4 cylindar (!!!fixed volume number 2!!!)
-!ASLV,R  
-!LSLA,R
-!CM,CM_1,LINE    !line component
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,0  
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 3
-!CMSEL,S,CM_1
-!LSEL,R,LOC,Y,90  
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 4
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,0  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin
-!LSEL,R,LOC,Z,s*p  
-!LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 2
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,0  
-!LESIZE,ALL,s/n/2, , , ,1, , ,0,   !axial direction mesh size 1
-!CMSEL,S,CM_1
-!LSEL,R,LOC,X,r+margin  
-!LSEL,R,LOC,Y,90  
-!LESIZE,ALL,s/n/2, , , ,1, , ,0,   !axial direction mesh size 2
-!ALLSEL,ALL
-!CMDELE,CM_1
-!
+VSEL,S, , ,2    !select first middle 1/4 cylindar (!!!fixed volume number 2!!!)
+ASLV,R  
+LSLA,R
+CM,CM_1,LINE    !line component
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,0  
+LSEL,R,LOC,Z,0  
+LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,0  
+LSEL,R,LOC,Z,s*p  
+LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 2
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,90  
+LSEL,R,LOC,Z,0  
+LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 3
+CMSEL,S,CM_1
+LSEL,R,LOC,Y,90  
+LSEL,R,LOC,Z,s*p  
+LESIZE,ALL, , ,2, ,1, , ,0,   !radial direction mesh size 4
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r2
+LSEL,R,LOC,Z,0  
+LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r2
+LSEL,R,LOC,Z,s*p  
+LESIZE,ALL, , ,D, ,1, , ,0,   !annular direction mesh size 2
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r2
+LSEL,R,LOC,Y,0  
+LESIZE,ALL,s/n/2, , , ,1, , ,0,   !axial direction mesh size 1
+CMSEL,S,CM_1
+LSEL,R,LOC,X,r2
+LSEL,R,LOC,Y,90  
+LESIZE,ALL,s/n/2, , , ,1, , ,0,   !axial direction mesh size 2
+ALLSEL,ALL
+CMDELE,CM_1
+
 !VSEL,S, , ,10   !select first outer 1/4 cylindar (!!!fixed volume number 10!!!)
 !ASLV,R  
 !LSLA,R
