@@ -9,45 +9,41 @@ KEYW,PR_DYNA,1
 !/CWD,'C:\Users\Cliff\Desktop\tmp\2D_pullout'
 
 PI = acos(-1)
-r = 1.25	!spiral fibre coil radius (mm)
+r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
 n = 16	!division in single pitch (n must be multiple of 4)
-p = 1+8/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
+p = 1+4/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
-r_margin = r_beam/2.00    !gap between fibre and concrete
-r_inner = 3*r+r_margin   !radius of inner cylindar
+r_margin = r_beam/1.00    !gap between fibre and concrete
+r1 = 2*r    !radius of inner cylindar
 !H = 75  !total depth of specimen (mm)
 H = 2.00*s*p  !total depth of specimen (mm)
-
+z_velo = 50 !pull velocity (m/s)
 
 /PREP7
-ET,1,BEAM161
-ET,2,SHELL163
-!KEYOPT,1,1,1
-!KEYOPT,1,2,2
-!KEYOPT,1,4,0,   
-!KEYOPT,1,5,1
-*SET,_RC_SET,1, 
-R,1 
-RMODIF,1,1,0,1,1,0,0,   
-RMODIF,1,6,0,0  
-*SET,_RC_SET,2, 
-R,2 
-RMODIF,2,1, , ,1, , , , 
-MPTEMP,,,,,,,   !fibre material model (number 1)
-MP,DENS,1,7800  
-MP,EX,1,2e11
-MP,NUXY,1,0.3
-MPTEMP,,,,,,,   !bonding material model (number 2)
-MP,DENS,2,7800
-MP,EX,2,2e11
-MP,NUXY,2,0.3
-MPTEMP,,,,,,,   !concrete material model (number 3)
-MP,DENS,3,2200
-MP,EX,3,3e10
-MP,NUXY,3,0.2
+ET,1,SHELL163
+ET,2,BEAM161
+*SET,_RC_SET,1,
+R,1
+RMODIF,1,1, , ,1, , , ,
+*SET,_RC_SET,2,
+R,2
+RMODIF,2,1,0,1,1,0,0,
+RMODIF,2,6,0,0
+MPTEMP,,,,,,,   !concrete material model
+MP,DENS,1,0.0024
+MP,EX,1,2e4
+MP,NUXY,1,0.2
+MPTEMP,,,,,,,   !bonding material model
+MP,DENS,2,0.0022
+MP,EX,2,3e4
+MP,NUXY,2,0.2
+MPTEMP,,,,,,,   !fibre material model
+MP,DENS,3,0.0078
+MP,EX,3,2e5
+MP,NUXY,3,0.28
 
 *DIM,SPLINE,ARRAY,n*p+1,2,1, , ,
 *DIM,K_spline,ARRAY,n*p+1,1,1, , ,
@@ -71,19 +67,19 @@ LSTR,K_max,K_max+2
 LSTR,K_max,K_max+4
 AL,1,4,2,6  !create spline area, fixed line number!!!
 AL,1,5,3,7  !create spline area, fixed line number!!!
-RECTNG,0,s*p,-r_inner,r_inner,  !draw concrete
-RECTNG,s*p,H,-r_inner,r_inner,
-RECTNG,0,s*p,r_inner,H/2,
-RECTNG,s*p,H,r_inner,H/2,
-RECTNG,0,s*p,-r_inner,-H/2,
-RECTNG,s*p,H,-r_inner,-H/2,
+RECTNG,0,s*p,-r1,r1,  !draw concrete
+RECTNG,s*p,H,-r1,r1,
+RECTNG,0,s*p,r1,H/2,
+RECTNG,s*p,H,r1,H/2,
+RECTNG,0,s*p,-r1,-H/2,
+RECTNG,s*p,H,-r1,-H/2,
 AOVLAP,ALL
 NUMCMP,ALL
 
 LSEL,S,LOC,X,0, !mesh sizes for lines
 LSEL,A,LOC,X,s*p,
 LSEL,A,LOC,X,H,
-LSEL,R,LOC,Y,-r_inner,r_inner,
+LSEL,R,LOC,Y,-r1,r1,
 LESIZE,ALL,r_margin, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,0.25*s*p,0.75*s*p
@@ -92,18 +88,18 @@ ALLSEL,ALL
 LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
 LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
 ALLSEL,ALL
-LSEL,S,LOC,Y,r_inner+0.25*(H-r_inner)/2,r_inner+0.75*(H-r_inner)/2
-LSEL,A,LOC,Y,-r_inner-0.25*(H-r_inner)/2,-r_inner-0.75*(H-r_inner)/2
+LSEL,S,LOC,Y,r1+0.25*(H-r1)/2,r1+0.75*(H-r1)/2
+LSEL,A,LOC,Y,-r1-0.25*(H-r1)/2,-r1-0.75*(H-r1)/2
 LESIZE,ALL,1.00*s/n , , , , , , ,0,
 ALLSEL,ALL
 
-AATT,2,2,2,0    !mesh attribute for bond matireal
+AATT,2,1,1,0    !mesh attribute for bond matireal
 ASEL,S, , ,1    !!!fixed area number!!!
 ASEL,A, , ,2    !!!fixed area number!!!
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
-AATT,3,2,2,0    !mesh attribute for concrete
+AATT,1,1,1,0    !mesh attribute for concrete
 ASEL,U, , ,1    !!!fixed area number!!!
 ASEL,U, , ,2    !!!fixed area number!!!
 FLST,2,4,4,ORDE,4   
@@ -117,45 +113,45 @@ AMESH,ALL
 ALLSEL,ALL
 
 
-LSEL,S, , ,1
-NSLL,S,1
-*GET,N_NUM,NODE,0,COUNT
-NUMSTR,ELEM,100000
-N,100000,-2.00*r_margin,0,0
-E,100000,1,N_NUM+2
-E,3,1,N_NUM+3
-E,N_NUM,2,N_NUM+1
-*DO,i,3,N_NUM-1,1
-	E,i+1,i,i+N_NUM
-*ENDDO
-
-
-EDPART,CREATE   !create all parts
-!!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
-!!!EDCGEN,TSTS,2,3,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0
-EDCGEN,ASTS,1,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0 
-
-NSEL,S,,,100000   !PULL for pull
-CM,PULL,NODE
-CMSEL,A,PULL
-*DIM,TIME,ARRAY,2,1,1, , ,  
-*SET,TIME(2,1,1) , 60000   
-*DIM,VELO,ARRAY,2,1,1, , ,  
-*SET,VELO(2,1,1) , -10.0
-EDLOAD,ADD,VX,0,PULL,TIME,VELO, 1, , , , ,  
-ALLSEL,ALL  
-
-NSEL,S,LOC,X,H  !fix end
-CM,FIX,NODE
-CMSEL,A,FIX
-D,ALL, , , , , ,ALL, , , , ,   
-ALLSEL,ALL
-NUMCMP,ALL  
-
-FINISH
-/SOL
-TIME,3,
-EDRST, ,0.1,
-EDHTIME, ,0,
-EDDUMP, ,0,
-EDWRITE,LSDYNA,'tmp0','k',' '
+!LSEL,S, , ,1
+!NSLL,S,1
+!*GET,N_NUM,NODE,0,COUNT
+!NUMSTR,ELEM,100000
+!N,100000,-2.00*r_margin,0,0
+!E,100000,1,N_NUM+2
+!E,3,1,N_NUM+3
+!E,N_NUM,2,N_NUM+1
+!*DO,i,3,N_NUM-1,1
+!	E,i+1,i,i+N_NUM
+!*ENDDO
+!
+!
+!EDPART,CREATE   !create all parts
+!!!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
+!!!!EDCGEN,TSTS,2,3,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0
+!EDCGEN,ASTS,1,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0 
+!
+!NSEL,S,,,100000   !PULL for pull
+!CM,PULL,NODE
+!CMSEL,A,PULL
+!*DIM,TIME,ARRAY,2,1,1, , ,  
+!*SET,TIME(2,1,1) , 60000   
+!*DIM,VELO,ARRAY,2,1,1, , ,  
+!*SET,VELO(2,1,1) , -10.0
+!EDLOAD,ADD,VX,0,PULL,TIME,VELO, 1, , , , ,  
+!ALLSEL,ALL  
+!
+!NSEL,S,LOC,X,H  !fix end
+!CM,FIX,NODE
+!CMSEL,A,FIX
+!D,ALL, , , , , ,ALL, , , , ,   
+!ALLSEL,ALL
+!NUMCMP,ALL  
+!
+!FINISH
+!/SOL
+!TIME,3,
+!EDRST, ,0.1,
+!EDHTIME, ,0,
+!EDDUMP, ,0,
+!EDWRITE,LSDYNA,'tmp0','k',' '
