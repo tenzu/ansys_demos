@@ -20,7 +20,7 @@ r_margin = r_beam/1.00    !gap between fibre and concrete
 r1 = 2*r    !radius of inner cylindar
 !H = 75  !total depth of specimen (mm)
 H = 2.00*s*p  !total depth of specimen (mm)
-z_velo = 50 !pull velocity (m/s)
+y_velo = 50 !pull velocity (m/s)
 
 /PREP7
 ET,1,SHELL163
@@ -125,7 +125,7 @@ NSLL,S,1
 *GET,N_NUM,NODE,0,COUNT
 tmp_N_NUM = 100000
 NUMSTR,ELEM,tmp_N_NUM
-N,tmp_N_NUM,-2.00*r_margin,0,0
+N,tmp_N_NUM,-10.0*r_margin,0,0
 CM,fibre_node_CM,NODE
 CMSEL,A,fibre_node_CM
 TYPE,2
@@ -163,40 +163,38 @@ E,1,3,tmp_N_NUM+1
     E,i,i+1,tmp_N_NUM+1
     *GET,tmp_N_NUM,NODE,0,NUM,MAX
 *ENDDO
+ALLSEL,ALL
 
-ESEL,S,MAT,,3   
-NSLE,S  
-NPLOT   
-/PNUM,NODE,1
-/REPLOT 
-
-
-!EDPART,CREATE   !create all parts
-!!!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
-!!!!EDCGEN,TSTS,2,3,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0
+EDPART,CREATE   !create all parts
+!!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
+!!!EDCGEN,TSTS,2,3,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0
 !EDCGEN,ASTS,1,3,0.15,0.1,0,0,0.2, , , , ,0,90000000,0,0 
-!
-!NSEL,S,,,100000   !PULL for pull
-!CM,PULL,NODE
-!CMSEL,A,PULL
-!*DIM,TIME,ARRAY,2,1,1, , ,  
-!*SET,TIME(2,1,1) , 60000   
-!*DIM,VELO,ARRAY,2,1,1, , ,  
-!*SET,VELO(2,1,1) , -10.0
-!EDLOAD,ADD,VX,0,PULL,TIME,VELO, 1, , , , ,  
-!ALLSEL,ALL  
-!
-!NSEL,S,LOC,X,H  !fix end
-!CM,FIX,NODE
-!CMSEL,A,FIX
-!D,ALL, , , , , ,ALL, , , , ,   
-!ALLSEL,ALL
-!NUMCMP,ALL  
-!
-!FINISH
-!/SOL
-!TIME,3,
-!EDRST, ,0.1,
-!EDHTIME, ,0,
-!EDDUMP, ,0,
-!EDWRITE,LSDYNA,'tmp0','k',' '
+
+NSEL,S, , ,100000   !PULL for pull
+CM,PULL,NODE
+CMSEL,A,PULL
+*DIM,TIME,ARRAY,3,1,1, , ,
+*SET,TIME(2,1,1) , 1E3
+*SET,TIME(3,1,1) , 1E9
+*DIM,VELO,ARRAY,3,1,1, , ,
+*SET,VELO(1,1,1) ,-y_velo/6E4
+*SET,VELO(2,1,1) ,-y_velo/6E4
+*SET,VELO(3,1,1) ,-y_velo/6E4
+EDLOAD,ADD,VX,0,PULL,TIME,VELO, 0, , , , ,
+ALLSEL,ALL
+
+NSEL,S,LOC,X,H  !fix end
+CM,FIX,NODE
+CMSEL,A,FIX
+D,ALL, , , , , ,ALL, , , , ,   
+ALLSEL,ALL
+NUMMRG,ALL, , , ,LOW
+NUMCMP,ALL  
+
+FINISH
+/SOL
+TIME,3,
+EDRST, ,0.1,
+EDHTIME, ,0,
+EDDUMP, ,0,
+EDWRITE,LSDYNA,'tmp','k',' '

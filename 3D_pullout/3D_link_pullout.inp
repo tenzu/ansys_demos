@@ -363,13 +363,14 @@ ALLSEL,ALL
 ESEL,S,MAT,,1   !merge concrete nodes
 ESEL,A,MAT,,2
 NSLE,R
-NUMMRG,ALL, , , ,LOW
 ALLSEL,ALL
 
 ASEL,S,LOC,Z,-(H-s*p)  !fix end
 NSLA,R,1
 D,ALL, , , , , ,ALL, , , , ,
 ALLSEL,ALL
+NUMMRG,ALL, , , ,LOW
+NUMCMP,ALL  
 
 FINISH
 /SOL
