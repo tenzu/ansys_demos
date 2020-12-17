@@ -11,16 +11,16 @@ KEYW,PR_DYNA,1
 PI = acos(-1)
 r = 1	!spiral fibre coil radius (mm)
 s = 10 	!spiral fibre pitch (mm)
-n = 16	!division in single pitch (n must be multiple of 4)
-p = 1+4/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
+n = 32	!division in single pitch (n must be even multiple of 4)
+p = 1+16/n	!spital fibre total pitch number (must be an integer plus integral multiple of 4/n)
 K_num = p*n+1	!total node number in one spiral fibre
 L_num = K_num-1 !total element number in one spiral fibre
 r_beam = 0.25   !radius of fibre section (mm)
-r_margin = r_beam/1.00    !gap between fibre and concrete
+r_margin = r_beam/2.00    !gap between fibre and concrete
 r1 = 2*r    !radius of inner cylindar
 !H = 75  !total depth of specimen (mm)
-H = 2.00*s*p  !total depth of specimen (mm)
-y_velo = 50 !pull velocity (m/s)
+H = 1.50*s*p  !total depth of specimen (mm)
+y_velo = 10 !pull velocity (m/s)
 
 /PREP7
 ET,1,SHELL163
@@ -91,7 +91,8 @@ LSEL,R,LOC,Y,-r1,r1,
 LESIZE,ALL,r_margin, , , , , , ,0,
 ALLSEL,ALL
 LSEL,S,LOC,X,0.25*s*p,0.75*s*p
-LESIZE,ALL,2.00*r_margin, , , , , , ,1,
+!LESIZE,ALL,r_margin, , , , , , ,1,
+LESIZE,ALL, , ,n*p, ,1, , ,0, 
 ALLSEL,ALL
 LSEL,S,LOC,X,s*p+0.25*(H-s*p),s*p+0.75*(H-s*p)
 LESIZE,ALL, , ,1.00*n*(H-s*p)/s, , , , ,0,
