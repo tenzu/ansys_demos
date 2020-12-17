@@ -35,11 +35,11 @@ KEYOPT,2,4,0,
 KEYOPT,2,5,1
 *SET,_RC_SET,1,
 R,1
-RMODIF,1,1, , ,1,1,1,1, 
+RMODIF,1,1, , ,1,1,1,1,
 *SET,_RC_SET,2,
 R,2
-RMODIF,2,1,1,2.0*r_beam,2.0*r_beam,0,0, 
-RMODIF,2,6,0,0  
+RMODIF,2,1,1,2.0*r_beam,2.0*r_beam,0,0,
+RMODIF,2,6,0,0
 MPTEMP,,,,,,,   !concrete material model
 MP,DENS,1,0.0024
 MP,EX,1,2e4
@@ -115,69 +115,61 @@ FITEM,2,14      !!!fixed line number!!!
 FITEM,2,6       !!!fixed line number!!!
 FITEM,2,7       !!!fixed line number!!!
 FITEM,2,16      !!!fixed line number!!!
-LCCAT,P51X  
+LCCAT,P51X
 MSHKEY,1    !area meshing
 AMESH,ALL
 ALLSEL,ALL
 
-LSEL,S, , ,1
+LSEL,S, , ,1    !!!fixed line number!!!
 NSLL,S,1
 *GET,N_NUM,NODE,0,COUNT
 tmp_N_NUM = 100000
 NUMSTR,ELEM,tmp_N_NUM
 N,tmp_N_NUM,-2.00*r_margin,0,0
-TYPE,2   
+CM,fibre_node_CM,NODE
+CMSEL,A,fibre_node_CM
+TYPE,2
 MAT,3
-REAL,2   
-ESYS,0   
-SECNUM, 
+REAL,2
+ESYS,0
+SECNUM,
 
-LSEL,S, , ,1
-NSLL,S,1
-NSEL,S, , ,tmp_N_NUM
+NSEL,S, , ,tmp_N_NUM    !create beam element
 NSEL,A, , ,1
-CM,node_CM,NODE 
-CMSEL,A,node_CM 
-*GET,x1,NODE,tmp_N_NUM,LOC,X
+*GET,x1,NODE,tmp_N_NUM,LOC,X    !!!fixed node numbers below!!!
 *GET,y1,NODE,tmp_N_NUM,LOC,Y
 *GET,x2,NODE,1,LOC,X
 *GET,y2,NODE,1,LOC,Y
 N, ,x1+abs(x2-x1)/2.0,0.5,0
-!N,tmp_N_NUM+1,x1+abs(x2-x1)/2.0,-(1/2)*(x1**2-2*x1*x2+x2**2-y1**2+y2*2)/(y1-y2),0
 E,tmp_N_NUM,1,tmp_N_NUM+1
-CMDELE,NODE_CM
-
-LSEL,S, , ,1
-NSLL,S,1
+*GET,tmp_N_NUM,NODE,0,NUM,MAX
 NSEL,S, , ,1
 NSEL,A, , ,3
-CM,node_CM,NODE 
-CMSEL,A,node_CM 
 *GET,x1,NODE,1,LOC,X
 *GET,y1,NODE,1,LOC,Y
 *GET,x2,NODE,3,LOC,X
 *GET,y2,NODE,3,LOC,Y
-N, ,x1,((x1**2-2*x1*x2+x2**2-y1**2)+(y2**2))/2/(y2-y1),0
-E,1,3,tmp_N_NUM+2
-CMDELE,NODE_CM
+N, ,x1+abs(x2-x1)/3.0,((x1**2-2*x1*x2+x2**2-y1**2)+(y2**2))/2/(y2-y1),0
+E,1,3,tmp_N_NUM+1
+*GET,tmp_N_NUM,NODE,0,NUM,MAX
+*DO,i,3,N_NUM-1,1
+    *GET,x1,NODE,i,LOC,X
+    *GET,y1,NODE,i,LOC,Y
+    *GET,x2,NODE,i+1,LOC,X
+    *GET,y2,NODE,i+1,LOC,Y
+    NSEL,S, , ,i
+    NSEL,S, , ,i+1
+    N, ,x1+abs(x2-x1)/3.0,((x1**2-2*x1*x2+x2**2-y1**2)+(y2**2))/2/(y2-y1),0
+    E,i,i+1,tmp_N_NUM+1
+    *GET,tmp_N_NUM,NODE,0,NUM,MAX
+*ENDDO
 
+ESEL,S,MAT,,3   
+NSLE,S  
+NPLOT   
+/PNUM,NODE,1
+/REPLOT 
 
-
-
-
-
-
-
-
-
-
-
-!E,100000,1,N_NUM+2
-!E,3,1,N_NUM+3
-!E,N_NUM,2,N_NUM+1
-!*DO,i,3,N_NUM-1,1
-!	E,i+1,i,i+N_NUM
-!*ENDDO
 
 !EDPART,CREATE   !create all parts
 !!!!EDCGEN,TSTS,1,2,0.15,0.1,0,0,0.2,100,3.5, , ,0,90000000,0,0   
