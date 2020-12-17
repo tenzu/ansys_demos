@@ -276,13 +276,20 @@ LESIZE,ALL,s/n, , , ,1, , ,0,   !axial direction mesh size 2
 ALLSEL,ALL
 CMDELE,CM_1
 
-VSEL,S,LOC,X,0,r1-margin
-VSEL,A,LOC,X,r2,r3
+!!!for 3 mat!!!
+!VSEL,S,LOC,X,0,r1-margin
+!VSEL,A,LOC,X,r2,r3
+!VATT,1,1,1,0    !mesh attribute for concrete
+!ALLSEL,ALL
+!VSEL,S,LOC,X,r1-margin,r2
+!VATT,2,1,1,0    !mesh attribute for cohesion layer
+!ALLSEL,ALL
+!MSHAPE,0,3d
+!MSHKEY,1    !mesh all volumns
+!VMESH,ALL
+
+!!!for 2 mat!!!
 VATT,1,1,1,0    !mesh attribute for concrete
-ALLSEL,ALL
-VSEL,S,LOC,X,r1-margin,r2
-VATT,2,1,1,0    !mesh attribute for cohesion layer
-ALLSEL,ALL
 MSHAPE,0,3d
 MSHKEY,1    !mesh all volumns
 VMESH,ALL
@@ -356,7 +363,7 @@ ALLSEL,ALL
 ESEL,S,MAT,,1   !merge concrete nodes
 ESEL,A,MAT,,2
 NSLE,R
-NUMMRG,NODE, , , ,LOW
+NUMMRG,ALL, , , ,LOW
 ALLSEL,ALL
 
 ASEL,S,LOC,Z,-(H-s*p)  !fix end
