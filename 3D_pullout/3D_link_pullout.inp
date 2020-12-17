@@ -39,13 +39,13 @@ z_velo = 50 !pull velocity (m/s)
 ET,1,SOLID164
 ET,2,LINK160
 R,1,r_beam, !section area for fibre
-MP,DENS,1,0.0024    !material properties
+MP,DENS,1,0.0024    !concrete material properties
 MP,EX,1,2e4
 MP,NUXY,1,0.2
-MP,DENS,2,0.0024    !material properties
+MP,DENS,2,0.0024    !bonding material properties
 MP,EX,2,2.1e4
 MP,NUXY,2,0.2
-MP,DENS,3,0.0078    !material properties
+MP,DENS,3,0.0078    !fibre material properties
 MP,EX,3,2e5
 MP,NUXY,3,0.28
 
