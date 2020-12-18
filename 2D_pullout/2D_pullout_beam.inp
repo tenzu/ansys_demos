@@ -20,7 +20,7 @@ r_margin = r_beam/2.00    !gap between fibre and concrete
 r1 = 2*r    !radius of inner cylindar
 !H = 75  !total depth of specimen (mm)
 H = 1.50*s*p  !total depth of specimen (mm)
-y_velo = 10 !pull velocity (m/s)
+y_velo = 50 !pull velocity (m/s)
 
 /PREP7
 ET,1,SHELL163
@@ -173,10 +173,9 @@ NSEL,S, , ,100000   !PULL for pull
 CM,PULL,NODE
 CMSEL,A,PULL
 *DIM,TIME,ARRAY,3,1,1, , ,
-*SET,TIME(2,1,1) , 1E3
+*SET,TIME(2,1,1) , 5E2
 *SET,TIME(3,1,1) , 1E9
 *DIM,VELO,ARRAY,3,1,1, , ,
-*SET,VELO(1,1,1) ,-y_velo/6E4
 *SET,VELO(2,1,1) ,-y_velo/6E4
 *SET,VELO(3,1,1) ,-y_velo/6E4
 EDLOAD,ADD,VX,0,PULL,TIME,VELO, 0, , , , ,
