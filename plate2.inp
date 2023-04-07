@@ -1,0 +1,37 @@
+a=1000  !长边长度
+b=800   !短边长度
+mesh_size=20    !网格尺寸
+/NOPR   
+KEYW,PR_SET,1   
+KEYW,PR_STRUC,1 
+/PREP7  
+ET,1,SHELL181   
+MPTEMP,,,,,,,,  
+MPTEMP,1,0  
+MPDATA,EX,1,,2e11   
+MPDATA,PRXY,1,,0.3  
+sect,1,shell,,  
+secdata, 6,1,0.0,3  
+secoffset,MID   
+seccontrol,,,, , , ,
+RECTNG,0,a/2,0,b/2  !绘制1/4板
+LESIZE,ALL,mesh_size, , , ,1, , ,1,
+MSHKEY,1
+AMESH,ALL   
+ARSYM,X,ALL, , , ,0,0   !镜像得到1/2板
+ARSYM,Y,ALL, , , ,0,0   !镜像得到全板
+NUMMRG,ALL, , , ,LOW    !合并重合的节点
+LSEL,S,LOC,X,a/2    !依次选中板的边界
+LSEL,A,LOC,X,-a/2   
+LSEL,A,LOC,Y,-b/2   
+LSEL,A,LOC,Y,b/2
+DL,ALL, ,ALL,   !约束所有的自由度  
+ALLSEL,ALL  !重新选中所有元素
+NSEL,S,LOC,X,0  !选中X坐标为零的节点
+NSEL,R,LOC,Y,0  !在上一步的结果中选中Y坐标为零的节点，即(0,0)节点
+F,ALL,FZ,-1000  !在(0,0)节点上施加垂直于板面的集中力
+ALLSEL,ALL
+/SOL
+SOLVE   
+/POST1
+PLNSOL, S,EQV, 0,1.0
